@@ -20,5 +20,7 @@
   "license": "GPL 2.0",
   "readmeFilename": "README.md",
   "dependencies": {
+    "jsonfp": "0.0.5",
+    "soarjs": "^1.0.1"
   }
 }
