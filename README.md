@@ -76,6 +76,7 @@ _tbName_ is the table name of updated data. _data_ is a plain object containing 
 ### newsql.del(tbName, filter, query, cb)
 _tbName_ is the table name of data to be deleted. _filter_ is a query filter. See [this](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which takes an error object (if errors occurred).
 
+<a name="queryFilter"></a>
 ## The query filter
 A query filter specifies the query condition. Below is what a query filter looks like:
 
