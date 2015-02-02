@@ -16,27 +16,19 @@ before(function() {
 
 describe('Test newSQL update', function()  {
 	it('Insert', function(done) {
-		var  cmd = {
-			op: 'insert',
-			entity: 'Person',
-			data: {name: 'David', dob: '1988-12-05', gender: 1, skill: ['node.js', 'Java'], weight: 80}
-		};
+		var  data = {name: 'David', dob: '1988-12-05', gender: 1, skill: ['node.js', 'Java'], weight: 80};
 
-		newsql.execute(cmd, function(err, id) {
+		newsql.insert('Person', data, function(err, id) {
 			//console.log('new entity id is %d', id);
 			done();
 		});
 	});
 
 	it('Delete', function(done) {
-		var  cmd = {
-			op: 'delete',
-			entity: 'Person',
-			filter: {name: 'weight', op: '<'},
-			query: {weight: 100}
-		};
+		var  filter = {name: 'weight', op: '<'},
+			 query = {weight: 100};
 
-		newsql.execute(cmd, function(err, result) {
+		newsql.del('Person', filter, query, function(err, result) {
 			//assert(!err, 'cannot delete successfully');
 			//console.log(JSON.stringify(result, null, 2));
 			done();
@@ -48,15 +40,10 @@ describe('Test newSQL update', function()  {
 					{name: 'gender', op: '='},
 					{name: 'weight', op: '>='}
 				]},
-			 cmd = {
-				op: 'update',
-				entity: 'Person',
-				filter: orFilter,
-				data: {dob: '1992-04-01'},
-				query: {weight: 180, gender: 1}
-			};
+			 data = {dob: '1992-04-01'},
+			 query = {weight: 180, gender: 1};
 
-		newsql.execute(cmd, function(err) {
+		newsql.update('Person', data, orFilter, query, function(err) {
 			var  sbi = soar.sqlBuildInfo('Person');
 	    	sbi.column(['dob']).
 	    	filter( {name: 'Person_id', op: '='} );
@@ -70,8 +57,8 @@ describe('Test newSQL update', function()  {
 	    	newsql.execute(qcmd, function(err, result) {
 	    		assert.equal(result.dob.toString().indexOf('Wed Apr 01'), 0, 'dob not correct');
 
-	    		cmd.data = {dob: '1992-04-21'};
-	    		newsql.execute(cmd, function(err) {
+	    		data = {dob: '1992-04-21'};
+	    		newsql.update('Person', data, orFilter, query, function(err) {
 	    			done();
 	    		});
 	    	});

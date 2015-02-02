@@ -99,17 +99,13 @@ describe('Test newSQL query', function()  {
 describe('Test newSQL listing', function()  {
 
     it('SQL only listing', function(done) {
-    	var  sbi = soar.sqlBuildInfo('Person');
+    	var  sbi = newsql.sqlBuildInfo('Person');
     	sbi.column(['Person_id', 'name', 'gender']).
     	filter( {name: 'dob', op: '>'} );
 
-    	var  cmd = {
-    		op: 'list',
-    		expr: sbi.value(),
-    		query: {dob: new Date('1990-01-01')}
-    	};
-
-    	newsql.execute(cmd, function(err, result) {
+    	var  query = {dob: new Date('1990-01-01')};
+        newsql.find(sbi.value(), query, function(err, result) {
+    	//newsql.execute(cmd, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
     		assert.equal( result.length, 2, 'match 2 persons');
     		assert.equal( result[0].name, 'Chris', 'first match is Chris');
