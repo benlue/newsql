@@ -71,10 +71,10 @@ _expr_ is a SQL expression which can be obtained by calling _sbi.value()_. _expr
 _tbName_ is the table where data will be inserted. _data_ is a plain object containing data to be inserted. _cb(err, id)_ is a callback function which takes an error and an id. _id_ is the primary key value of the newly inserted data if the primary key is a auto-incremented integer column.
 
 ### newsql.update(tbName, data, filter, query, cb)
-_tbName_ is the table name of updated data. _data_ is a plain object containing data to be inserted. _filter_ is a query filter. See [this](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which takes an error object (if errors occurred).
+_tbName_ is the table name of updated data. _data_ is a plain object containing data to be inserted. _filter_ is a query filter. See [query filters](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which takes an error object (if errors occurred).
 
 ### newsql.del(tbName, filter, query, cb)
-_tbName_ is the table name of data to be deleted. _filter_ is a query filter. See [this](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which takes an error object (if errors occurred).
+_tbName_ is the table name of data to be deleted. _filter_ is a query filter. See [query filters](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which takes an error object (if errors occurred).
 
 <a name="queryFilter"></a>
 ## The query filter
