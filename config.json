@@ -1,0 +1,11 @@
+{
+	"dbConfig": {
+		"host"     : "127.0.0.1",
+		"database" : "nstest",
+		"user"     : "root",
+		"password" : "root",
+		"supportBigNumbers" : true,
+		"connectionLimit"   : 32
+	},
+	"queryLimit": 100
+}
