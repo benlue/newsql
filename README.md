@@ -35,7 +35,7 @@ You can insert an entry to the _Person_ table:
 
 Wait a minute! Where does the 'weight' property come from? It's not defined in the schema!
 
-Well, that's where **newsql** does the magic. It will save the 'weight' property even though the 'weight' property is defined as a table column, and that property can later be retrieved as if it's a "normal" table column. You can actually save as many "undefined" properties as you wish. 
+Well, that's where **newsql** does the magic. It will save the 'weight' property even though the 'weight' property is not defined as a table column, and that property can later be retrieved as if it's a "normal" table column. You can actually save as many "undefined" properties as you wish. 
 
 What's more, you can even query on those "undefined" properties. Below is an example:
 
@@ -61,6 +61,9 @@ The current release supports the following APIs:
 ### newsql.config()
 You can use this function to setup database connections. Actually you have to invoke this function before doing any database access. **newsql** will look for a config.json file in the project root directory. For details about setting up database connections, please refer to [SOAR](https://github.com/benlue/soar#dbSetup).
 
+### newsql.getConnection(cb)
+An asynchronous call to get a database connection. The callback function _cb_ could receive _err_ and _conn_ parameters. If the function call fails to obtain a connection, _cb(err)_ will be invoked. Otherwise, _cb(null, conn)_ will be invoked where _conn_ is the connection object.
+
 ### newsql.sqlBuildInfo(tbName)
 Given a table name, this function will return a SBI (SQL Build Info) object will can be used to effectively build SQL statements. This [document](https://github.com/benlue/soar#dynamicSQL) explains how to use SBI to compose SQL statements.
 
@@ -71,10 +74,10 @@ _expr_ is a SQL expression which can be obtained by calling _sbi.value()_. _expr
 _tbName_ is the table where data will be inserted. _data_ is a plain object containing data to be inserted. _cb(err, id)_ is a callback function which takes an error and an id. _id_ is the primary key value of the newly inserted data if the primary key is a auto-incremented integer column.
 
 ### newsql.update(tbName, data, filter, query, cb)
-_tbName_ is the table name of updated data. _data_ is a plain object containing data to be inserted. _filter_ is a query filter. See [query filters](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which takes an error object (if errors occurred).
+_tbName_ is the table name of updated data. _data_ is a plain object containing data to be inserted. _filter_ is a query filter. See [query filters](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err)_ is a callback function which takes an error object (if errors occurred).
 
 ### newsql.del(tbName, filter, query, cb)
-_tbName_ is the table name of data to be deleted. _filter_ is a query filter. See [query filters](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which takes an error object (if errors occurred).
+_tbName_ is the table name of data to be deleted. _filter_ is a query filter. See [query filters](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err)_ is a callback function which takes an error object (if errors occurred).
 
 <a name="queryFilter"></a>
 ## The query filter
