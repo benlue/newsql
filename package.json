@@ -1,6 +1,6 @@
 {
   "name": "newsql",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Get the best of both worlds",
   "engines": "0.10.21",
   "main": "lib/newsql.js",
@@ -22,8 +22,8 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "async": "^0.9.0",
-    "jsonfp": "0.0.6",
+    "jsonfp": "^0.1.1",
     "lodash": "^3.0.1",
-    "soarjs": "^1.1.0"
+    "soarjs": "^1.1.3"
   }
 }

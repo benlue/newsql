@@ -5,20 +5,17 @@
 * Copyright(c) 2015 Gocharm Inc.
 */
 var  assert = require('assert'),
-	 newsql = require('../lib/newsql.js'),
-	 soar;
+	 newsql = require('../lib/newsql.js');
 
 before(function() {
     newsql.config();
-    soar = newsql.getSOAR();
-    //soar.setDebug( true );
 });
 
 
 describe('Test newSQL query', function()  {
 
     it('SQL only query', function(done) {
-    	var  sbi = soar.sqlBuildInfo('Person');
+    	var  sbi = newsql.sqlTemplate('Person');
     	sbi.column(['Person_id', 'name', 'gender']).
     	filter( {name: 'dob', op: '>'} );
 
@@ -35,7 +32,7 @@ describe('Test newSQL query', function()  {
     });
 
     it('Query on non-SQL columns', function(done) {
-    	var  sbi = soar.sqlBuildInfo('Person');
+    	var  sbi = newsql.sqlTemplate('Person');
     	sbi.column(['name', 'gender', 'weight']).
     	filter( {name: 'dob', op: '>'} );
 
@@ -53,7 +50,7 @@ describe('Test newSQL query', function()  {
     });
 
     it('Query with non-SQL conditions', function(done) {
-    	var  sbi = soar.sqlBuildInfo('Person'),
+    	var  sbi = newsql.sqlTemplate('Person'),
     		 orFilter = sbi.chainFilters('AND', [
 					{name: 'dob', op: '>'},
 					{name: 'weight', op: '>'}
@@ -77,7 +74,7 @@ describe('Test newSQL query', function()  {
     });
 
     it('non-sql appears only in where condition', function(done) {
-        var  sbi = soar.sqlBuildInfo('Person');
+        var  sbi = newsql.sqlTemplate('Person');
         sbi.column(['Person_id', 'name', 'gender']).
         filter( {name: 'weight', op: '='} );
 
@@ -99,7 +96,7 @@ describe('Test newSQL query', function()  {
 describe('Test newSQL listing', function()  {
 
     it('SQL only listing', function(done) {
-    	var  sbi = newsql.sqlBuildInfo('Person');
+    	var  sbi = newsql.sqlTemplate('Person');
     	sbi.column(['Person_id', 'name', 'gender']).
     	filter( {name: 'dob', op: '>'} );
 
@@ -115,7 +112,7 @@ describe('Test newSQL listing', function()  {
     });
 
     it('Query on non-SQL columns', function(done) {
-    	var  sbi = soar.sqlBuildInfo('Person');
+    	var  sbi = newsql.sqlTemplate('Person');
     	sbi.column(['name', 'gender', 'weight']).
     	filter( {name: 'dob', op: '>'} );
 
@@ -136,7 +133,7 @@ describe('Test newSQL listing', function()  {
     });
 
     it('Query with ANDed non-SQL conditions', function(done) {
-    	var  sbi = soar.sqlBuildInfo('Person'),
+    	var  sbi = newsql.sqlTemplate('Person'),
     		 orFilter = sbi.chainFilters('AND', [
 					{name: 'dob', op: '<'},
 					{name: 'weight', op: '>'}
@@ -161,7 +158,7 @@ describe('Test newSQL listing', function()  {
     });
 
     it('Query with ORed non-SQL conditions', function(done) {
-    	var  sbi = soar.sqlBuildInfo('Person'),
+    	var  sbi = newsql.sqlTemplate('Person'),
     		 orFilter = sbi.chainFilters('OR', [
 					{name: 'dob', op: '>'},
 					{name: 'weight', op: '>'}
@@ -188,7 +185,7 @@ describe('Test newSQL listing', function()  {
     });
 
     it('Query with AND.OR non-SQL conditions', function(done) {
-    	var  sbi = soar.sqlBuildInfo('Person'),
+    	var  sbi = newsql.sqlTemplate('Person'),
     		 orFilter = sbi.chainFilters('OR', [
     		 		{name: 'gender', op: '='},
 					{name: 'weight', op: '>'}
@@ -217,7 +214,7 @@ describe('Test newSQL listing', function()  {
     });
 
     it('Query with OR.AND non-SQL conditions', function(done) {
-    	var  sbi = soar.sqlBuildInfo('Person'),
+    	var  sbi = newsql.sqlTemplate('Person'),
     		 andFilter = sbi.chainFilters('AND', [
     		 		{name: 'gender', op: '='},
 					{name: 'weight', op: '>'}
@@ -245,5 +242,36 @@ describe('Test newSQL listing', function()  {
     		*/
 			done();
     	});
+    });
+
+    it('Listing without columns specified', function(done) {
+        var  stemp = newsql.sqlTemplate('Person'),
+             cmd = {
+                op: 'list',
+                expr: stemp.value()
+             };
+
+        newsql.execute(cmd, function(err, list) {
+            //console.log( JSON.stringify(list, null, 2) );
+            assert.equal(list.length, 11, 'total of 11 persons');
+            assert.equal(list[10].hobby, 'reading', 'Person #10 has reading hobby');
+            done();
+        });
+    });
+
+    it('Listing with noSQL query and without columns specified', function(done) {
+        var  stemp = newsql.sqlTemplate('Person').filter({name: 'weight', op: '>'}),
+             cmd = {
+                op: 'list',
+                expr: stemp.value(),
+                query: {weight: 150}
+             };
+
+        newsql.execute(cmd, function(err, list) {
+            //console.log( JSON.stringify(list, null, 2) );
+            assert.equal(list.length, 3, 'total of 3 matches');
+            assert.equal(list[2].weight, 180, 'Person #3 weighted 180 pounds.');
+            done();
+        });
     });
 });
