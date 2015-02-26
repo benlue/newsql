@@ -5,7 +5,7 @@ SQL or NoSQL? That's a question having been asked by many developers. However, t
 
 When we look at the real world applications, we may find that the data model we need is actully a mix of both. That is a data model is usually composed of a set of "inertia" properties that are shared by all data instances while there are some "variable" properties which are owned by just some of the data instances. Those variable properties could spread out like a long tail. With that observation, it's easy to see that we'll never find the "right" answer by going either way.
 
-The good news is we may have a third option now. Image you can store data with properties not pre-defined as table columns. You can even query on those "undefined" properties. That will give you the benefits of NoSQL. On the other hand, **newsql** still exhibits the ACID properties and transactions are supported which are not available for NoSQL. Better yet, you can index any "undefined" properties whenever necessary. There are no limitations on how many indexes you can put on a table (or document) as most NoSQL databases have imposed.
+The good news is we may have a third option now. Image you can store data with properties not pre-defined as table columns. You can even query on those "undefined" properties. That will give you the benefits of NoSQL. On the other hand, **newsql** still exhibits the ACID properties and transactions are supported which are not available for NoSQL. Better yet, you can index any "undefined" properties whenever necessary. There are no limitations on how many indexes you can put on a table (or collection) as most NoSQL databases have imposed.
 
 ## Install
 
