@@ -162,7 +162,7 @@ You can use this function to setup database connections. Actually you have to in
 
 <a name="newsqlFind"></a>
 ### find(expr, query, cb)
-_expr_ is a SQL expression which can be built by [SQL templates](#newsqlAPI). SQL templates help you to describe which columns (properties) to retrieve and what query conditions to apply. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which takes an error and an array of returned data. Below shows an example:
+_expr_ is a SQL expression which can be built by [SQL templates](#sqlTemplate). SQL templates help you to describe which columns (properties) to retrieve and what query conditions to apply. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which takes an error and an array of returned data. Below shows an example:
 
     var  newsql = require('newsql');
     
