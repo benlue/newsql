@@ -164,13 +164,14 @@ describe('Test newSQL listing', function()  {
 					{name: 'weight', op: '>'}
 				]);
 
-    	sbi.column(['name', 'gender', 'weight']).
+    	sbi.column(['name', 'gender', 'weight', 'dob AS birthday']).
     	filter( orFilter );
 
     	var  cmd = {
     		op: 'list',
     		expr: sbi.value(),
     		query: {dob: new Date('1990-01-01'), weight: 150}
+            //query: {weight: 150}
     	};
 
     	newsql.execute(cmd, function(err, result) {
