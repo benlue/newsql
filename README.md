@@ -15,6 +15,9 @@ The good news is we may have a third option now. Image you can store data with p
 
 + [For NoSQL develpers](#nosqlDev)
 + [For SQL develpers](#sqlDev)
++ [Setup and configure](#newsqlConfig)
+  + [The config.json file](#configFile)
+  + [Configure programmatically](#configPro)
 + [APIs](#newsqlAPI)
   + [config()](#apiConfig)
   + [find()](#newsqlFind)
@@ -69,6 +72,7 @@ If you're SQL developers, guess you will be thrilled to be able to save data not
 You can use **newsql** to crerate a table right inside your program as:
 
     var  newsql = require('newsql');
+    
     newsql.createTable(schema, function(err) {
         if (err)
             // something went wrong
@@ -107,16 +111,57 @@ It's also possible to find out the structure of a table. You can use _newsql.des
             // table structure will be manifested in the schema object
     });
 
+<a name="newsqlConfig"></a>
+## Setup and configure
+Before **newsql** do the magical things for you, you have to configure it to talk to the database. Below **newsql** is the mySQL DBMS, so you have to setup a mySQL database and configure **newsql** to work with that database.
+
+Assuming you have setup mySQL and created a database called 'mySample', then you can configure **newsql** to access that database. Like [SOAR](https://github.com/benlue/soar), there are two ways to specify the database configuration: using a config file or doing it programmatically.
+
+<a name="configFile""></a>
+### The config.json file
+In the newsql package root directory, there is a **config.json** file to specify database connection parameters. It looks like the following:
+
+    {
+    	"dbConfig": {
+    		"host"     : "127.0.0.1",
+    		"database" : "mySample",
+    		"user"     : "your_acc_name",
+    		"password" : "your_passwd",
+    		"supportBigNumbers" : true,
+    		"connectionLimit"   : 32
+    	}
+    }
+
+where host is the database host and database is the database name. user and password are the database user name and password respectively. **newsql** will automatically turn on the connection pool for better performance.
+
+<a name="configPro""></a>
+### Configure programmatically
+You can configure the database connection settings right inside your node program. Here is how:
+
+    var  newsql = require('newsql');
+    var  options = {
+                dbConfig: {
+                    "host"     : "127.0.0.1",
+                    "database" : "mySample",
+                    "user"     : "your_acc_name",
+                    "password" : "your_passwd",
+                    "supportBigNumbers" : true,
+                    "connectionLimit"   : 32
+                }
+         };
+
+    newsql.config( options );
+
 <a name="newsqlAPI"></a>
 ## APIs
 Below explains APIs of the current release. First, the config and CRUD operations followed by assistence functions:
 
 <a name="apiConfig"></a>
-### newsql.config()
+### config()
 You can use this function to setup database connections. Actually you have to invoke this function before doing any database access. **newsql** will look for a config.json file in the project root directory. For details about setting up database connections, please refer to [SOAR](https://github.com/benlue/soar#dbSetup).
 
 <a name="newsqlFind"></a>
-### newsql.find(expr, query, cb)
+### find(expr, query, cb)
 _expr_ is a SQL expression which can be built by [SQL templates](#newsqlAPI). SQL templates help you to describe which columns (properties) to retrieve and what query conditions to apply. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which takes an error and an array of returned data. Below shows an example:
 
     var  newsql = require('newsql');
@@ -129,19 +174,19 @@ _expr_ is a SQL expression which can be built by [SQL templates](#newsqlAPI). SQ
     });
 
 <a name="apiInsert"></a>
-### newsql.insert(tbName, data, cb)
+### insert(tbName, data, cb)
 _tbName_ is the table to which data will be inserted. _data_ is a plain object containing data to be inserted. _cb(err, entityKey)_ is a callback function which takes an error and an _entityKey_ object. _entityKey_ is the object of table's primary key and the values of the newly inserted data. For NoSQL collections, _entityKey_ should look like {id: docID} where _docID_ is a distingished serial number for the inserted document.
 
 <a name="apiUpdate"></a>
-### newsql.update(tbName, data, filter, query, cb)
+### update(tbName, data, filter, query, cb)
 _tbName_ is the table name of updated data. _data_ is a plain object containing update data. _filter_ is a query filter. See [query filters](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err)_ is a callback function which takes an error object (if errors occurred).
 
 <a name="apiDel"></a>
-### newsql.del(tbName, filter, query, cb)
+### del(tbName, filter, query, cb)
 _tbName_ is the table name of data to be deleted. _filter_ is a query filter. See [query filters](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err)_ is a callback function which takes an error object (if errors occurred).
 
 <a name="apiExecute"></a>
-### newsql.execute(cmd, cb)
+### execute(cmd, cb)
 Besides the _find()_, _insert()_, _update()_, and _delete()_ functions, you can simple use _execute()_ to perform any of the CRUD operations. Actually, _find()_, _insert()_, _update()_, and _delete()_ are just wrappers around the _execute()_ function.
 
 _cmd_ is a command object to the _execute()_ function. It has the following properties:
@@ -153,11 +198,11 @@ _cmd_ is a command object to the _execute()_ function. It has the following prop
 + **conn**: a database connection object. You usually don't have to specify this property unless you want to do transactions.
 
 <a name="apiGetConn"></a>
-### newsql.getConnection(cb)
+### getConnection(cb)
 An asynchronous call to get a database connection. The callback function _cb_ could receive _err_ and _conn_ parameters. If the function call fails to obtain a connection, _cb(err)_ will be invoked. Otherwise, _cb(null, conn)_ will be invoked where _conn_ is the connection object.
 
 <a name="sqlTemplate"></a>
-### newsql.sqlTemplate(tbName)
+### sqlTemplate(tbName)
 Given a table name, this function will return a SQL template which can be used to effectively build SQL statements. This [document](https://github.com/benlue/soar#dynamicSQL) explains how to use SQL templates to compose SQL statements.
 
 <a name="transactions"></a>
