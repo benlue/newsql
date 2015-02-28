@@ -9,6 +9,8 @@ The good news is we may have a third option now. Image you can store data with p
 
 ## Install
 
+**newsql** use mySQL as the underlying database engine. Throughout this document, we'll assume you have installed mySQL. With mySQL working, you can add the **newsql** features:
+
     npm install newsql
     
 ## Contents
@@ -38,6 +40,7 @@ If you're a NoSQL developer and tired of maintaining data consistency in applica
 The way to program **newsql** is quite similar to program NoSQL. You can create a new collection by calling _newsql.createCollection()_. Below is the sample code:
 
     var  newsql = require('newsql');
+    
     newsql.createCollection('colName', function(err) {
         if (err)
             // something went wrong
@@ -61,13 +64,13 @@ To insert a document to a collection, you can
     newsql.insert('colName', document, function(err, docKey) {
     });
 
-For all CRUD operations, please refer to the [API](#newsqlAPI) section for details.
+For all CRUD operations, please refer to the [APIs](#newsqlAPI) section for details.
 
 Underneath **newsql** is a relational database (mySQL), so you can get all the benefits of relational databases. You can even use SQL statements directly if you want. Also, a plethora of DBMS clients or management tools will be at your disposal.
 
 <a name="sqlDev"></a>
 ## For SQL Developers
-If you're SQL developers, guess you will be thrilled to be able to save data not pre-defined in your schema. Far too often we have to adjust a table schema just because we came across a new data instance which has a property we don't know how to fit into the existing schema. Now you can take those surprizing data instances without bothering to modify the schema. With **newsql**, you can still have everything in control but allow some flexibilities in your design. Below we'll touch the issues of managing tables, and CRUD operations will be explained in the [API](#newsqlAPI) section.
+If you're SQL developers, guess you will be thrilled to be able to save data not pre-defined in your schema. Far too often we have to adjust a table schema just because we came across a new data instance which has a property we don't know how to fit into the existing schema. Now you can take those surprizing data instances without bothering to modify the schema. With **newsql**, you can still have everything in control but allow some flexibilities in your design. Below we'll touch the issues of managing tables, and CRUD operations will be explained in the [APIs](#newsqlAPI) section.
 
 You can use **newsql** to crerate a table right inside your program as:
 
