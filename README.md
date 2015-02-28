@@ -158,33 +158,84 @@ Below explains APIs of the current release. First, the config and CRUD operation
 
 <a name="apiConfig"></a>
 ### config()
-You can use this function to setup database connections. Actually you have to invoke this function before doing any database access. **newsql** will look for a config.json file in the project root directory. For details about setting up database connections, please refer to [SOAR](https://github.com/benlue/soar#dbSetup).
+You can use this function to setup database connections. Actually you have to invoke this function before doing any database access. **newsql** will look for a config.json file in the project root directory. For details about setting up database connections, please refer to [setup and configure](#newsqlConfig).
 
 <a name="newsqlFind"></a>
 ### find(expr, query, cb)
-_expr_ is a SQL expression which can be built by [SQL templates](#sqlTemplate). SQL templates help you to describe which columns (properties) to retrieve and what query conditions to apply. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which takes an error and an array of returned data. Below shows an example:
+_expr_ is a SQL expression which can be built by [SQL templates](#sqlTemplate). SQL templates help you to describe which columns (properties) to retrieve and what query conditions to apply. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which receives an error and an array of returned data. Below shows an example:
 
     var  newsql = require('newsql');
     
-    var  expr = newsql.sqlTemplate('myTable').column('name')
+    var  expr = newsql.sqlTemplate('myTable')
+                      .column('name')
                       .filter({name: 'age', op: '>'}).value();
                       
     newsql.find(expr, {age: 18}, function(err, list) {
     	// list will contain people whose age is greater than 18
     });
 
+In the above example, we use a SQL template to compose a query  which is almost the same as the following SQL statement:
+
+    SELECT name FROM myTable WHERE age > ?;
+    
+and in the _newsql.find()_ function all, we set the query condition to 'age > 18' by setting the query object as {age: 18}.
+
 <a name="apiInsert"></a>
 ### insert(tbName, data, cb)
-_tbName_ is the table to which data will be inserted. _data_ is a plain object containing data to be inserted. _cb(err, entityKey)_ is a callback function which takes an error and an _entityKey_ object. _entityKey_ is the object of table's primary key and the values of the newly inserted data. For NoSQL collections, _entityKey_ should look like {id: docID} where _docID_ is a distingished serial number for the inserted document.
+The _insert()_ function can insert an entity to a table or add a document to a collection (depending on you view it as a SQL or NoSQL operation). _tbName_ is the table to which data will be inserted. _data_ is a plain object containing data to be inserted. _cb(err, entityKey)_ is a callback function which recevies an error and an _entityKey_ object. _entityKey_ is the object of table's primary keys and values of the newly inserted entity. For NoSQL collections, _entityKey_ should look like {id: docID} where _docID_ is a serial number for the inserted document.
+
+    var  data = {
+                 name: 'David',
+                 dob: '1988-12-05',
+                 skill: ['node.js', 'Java']
+                 };
+                 
+    newsql.insert('Person', data, function(err, pk) {
+        if (err)
+            console.log( err.stack );
+        else
+            // a person added
+    });
 
 <a name="apiUpdate"></a>
 ### update(tbName, data, filter, query, cb)
-_tbName_ is the table name of updated data. _data_ is a plain object containing update data. _filter_ is a query filter. See [query filters](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err)_ is a callback function which takes an error object (if errors occurred).
+The _update()_ function can update a table entity or a doument in a colletion. **_tbName_** is the table name or collection name of the entity (document) to be updated. **_data_** is a plain object containing update data. **_filter_** is a the query condition. See [query filters](#queryFilter) for details. **_query_** is the actual value to be applied to the query condition. **_cb(err)_** is a callback function which receives an error object (if errors occurred).
 
+    var  data = {status: 'health check'},
+         filter = {name: 'weight', op: '>'},
+         query = {weight: 300};
+         
+    newsql.update('Person', data, filter, query, function(err) {
+        if (err)
+            console.log( err.stack );
+        else
+            // update successfully
+    });
+
+What the above example does is similar to the following SQL statement:
+
+    UPDATE Person SET status='health check'
+    WHERE weight > 300;
+    
 <a name="apiDel"></a>
 ### del(tbName, filter, query, cb)
-_tbName_ is the table name of data to be deleted. _filter_ is a query filter. See [query filters](#queryFilter) for more details. _query_ is the actual value to be applied to the query condition. _cb(err)_ is a callback function which takes an error object (if errors occurred).
+The _del()_ function can delete table entities or documents. **_tbName_** is the table or collection name of the entity to be deleted. **_filter_** is the query condition. See [query filters](#queryFilter) for details. **_query_** is the actual value to be applied to the query condition. _cb(err)_ is a callback function which receives an error object (if errors occurred).
 
+    var  filter = {name: 'status', op: '='},
+         query = {status: 'closed'};
+         
+    newsql.del('PurchaseOrder', filter, query, function(err) {
+        if (err)
+            console.log( err.stack );
+        else
+            // delete successfully
+    });
+
+Again, the above example is equivalent to the following SQL statement:
+
+    DELETE FROM PurchaseOrder
+    WHERE status = 'closed';
+    
 <a name="apiExecute"></a>
 ### execute(cmd, cb)
 Besides the _find()_, _insert()_, _update()_, and _delete()_ functions, you can simple use _execute()_ to perform any of the CRUD operations. Actually, _find()_, _insert()_, _update()_, and _delete()_ are just wrappers around the _execute()_ function.
