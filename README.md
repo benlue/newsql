@@ -162,7 +162,7 @@ You can use this function to setup database connections. Actually you have to in
 
 <a name="newsqlFind"></a>
 ### find(expr, query, cb)
-_expr_ is a SQL expression which can be built by [SQL templates](#sqlTemplate). SQL templates help you to describe which columns (properties) to retrieve and what query conditions to apply. _query_ is the actual value to be applied to the query condition. _cb(err, list)_ is a callback function which receives an error and an array of returned data. Below shows an example:
+**_expr_** is a SQL expression which can be built by [SQL templates](#sqlTemplate). SQL templates help you to describe which columns (properties) to retrieve and what query conditions to apply. **_query_** is the actual value to be applied to the query condition. **_cb(err, list)_** is a callback function which receives an error and an array of returned data. Below shows an example:
 
     var  newsql = require('newsql');
     
@@ -182,7 +182,7 @@ and in the _newsql.find()_ function all, we set the query condition to 'age > 18
 
 <a name="apiInsert"></a>
 ### insert(tbName, data, cb)
-The _insert()_ function can insert an entity to a table or add a document to a collection (depending on you view it as a SQL or NoSQL operation). _tbName_ is the table to which data will be inserted. _data_ is a plain object containing data to be inserted. _cb(err, entityKey)_ is a callback function which recevies an error and an _entityKey_ object. _entityKey_ is the object of table's primary keys and values of the newly inserted entity. For NoSQL collections, _entityKey_ should look like {id: docID} where _docID_ is a serial number for the inserted document.
+The _insert()_ function can insert an entity to a table or add a document to a collection (depending on you view it as a SQL or NoSQL operation). **_tbName_** is the table (collection) to which data (document) will be inserted. **_data_** is a plain object containing data to be inserted. _cb(err, entityKey)_ is a callback function which recevies an error and an **_entityKey_** object. **_entityKey_** is the object of table's primary keys and values of the newly inserted entity. For NoSQL collections, **_entityKey_** should look like {id: docID} where **_docID_** is a serial number for the inserted document.
 
     var  data = {
                  name: 'David',
@@ -254,7 +254,17 @@ An asynchronous call to get a database connection. The callback function _cb_ co
 
 <a name="sqlTemplate"></a>
 ### sqlTemplate(tbName)
-Given a table name, this function will return a SQL template which can be used to effectively build SQL statements. This [document](https://github.com/benlue/soar#dynamicSQL) explains how to use SQL templates to compose SQL statements.
+Given a table name, this function will return a SQL template which can be used to build and reuse SQL statements. This [document](https://github.com/benlue/soar#dynamicSQL) explains in detail how to use SQL templates to compose SQL statements.
+
+Basically, you create a SQL template and then add columns (document fields) that need to be retrieved. You can also add query conditions. Compared with SQL statements, SQL templates are easier to analyize and manipulate programmatically. It's also much easier to reuse SQL templates.
+
+Below is an example showing how to construct a SQL template:
+
+    var  stemp = newsql.sqlTemplate('Person');
+    
+    stemp.column(['Person_id', 'name', 'address'])
+         .filter( {name: 'Person_id', op: '='] )
+         .value();
 
 <a name="transactions"></a>
 ## How to do transactions

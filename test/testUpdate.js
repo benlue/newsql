@@ -15,8 +15,9 @@ describe('Test newSQL update', function()  {
 	it('Insert', function(done) {
 		var  data = {name: 'David', dob: '1988-12-05', gender: 1, skill: ['node.js', 'Java'], weight: 80};
 
-		newsql.insert('Person', data, function(err, id) {
+		newsql.insert('Person', data, function(err, pk) {
 			//console.log('new entity id is %d', id);
+			assert(pk.Person_id, 'should return the primary key');
 			done();
 		});
 	});
@@ -41,13 +42,13 @@ describe('Test newSQL update', function()  {
 			 query = {weight: 180, gender: 1};
 
 		newsql.update('Person', data, orFilter, query, function(err) {
-			var  sbi = newsql.sqlTemplate('Person');
-	    	sbi.column(['dob']).
+			var  stemp = newsql.sqlTemplate('Person');
+	    	stemp.column(['dob']).
 	    	filter( {name: 'Person_id', op: '='} );
 
 	    	var  qcmd = {
 	    		op: 'query',
-	    		expr: sbi.value(),
+	    		expr: stemp.value(),
 	    		query: {Person_id: 7}
 	    	};
 

@@ -1,6 +1,6 @@
 {
   "name": "newsql",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Get the best of both worlds",
   "engines": "0.10.21",
   "main": "lib/newsql.js",

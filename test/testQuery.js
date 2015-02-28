@@ -15,13 +15,13 @@ before(function() {
 describe('Test newSQL query', function()  {
 
     it('SQL only query', function(done) {
-    	var  sbi = newsql.sqlTemplate('Person');
-    	sbi.column(['Person_id', 'name', 'gender']).
+    	var  stemp = newsql.sqlTemplate('Person');
+    	stemp.column(['Person_id', 'name', 'gender']).
     	filter( {name: 'dob', op: '>'} );
 
     	var  cmd = {
     		op: 'query',
-    		expr: sbi.value(),
+    		expr: stemp.value(),
     		query: {dob: new Date('1990-01-01')}
     	};
 
@@ -32,13 +32,13 @@ describe('Test newSQL query', function()  {
     });
 
     it('Query on non-SQL columns', function(done) {
-    	var  sbi = newsql.sqlTemplate('Person');
-    	sbi.column(['name', 'gender', 'weight']).
+    	var  stemp = newsql.sqlTemplate('Person');
+    	stemp.column(['name', 'gender', 'weight']).
     	filter( {name: 'dob', op: '>'} );
 
     	var  cmd = {
     		op: 'query',
-    		expr: sbi.value(),
+    		expr: stemp.value(),
     		query: {dob: new Date('1990-01-01')}
     	};
 
@@ -50,18 +50,18 @@ describe('Test newSQL query', function()  {
     });
 
     it('Query with non-SQL conditions', function(done) {
-    	var  sbi = newsql.sqlTemplate('Person'),
-    		 orFilter = sbi.chainFilters('AND', [
+    	var  stemp = newsql.sqlTemplate('Person'),
+    		 orFilter = stemp.chainFilters('AND', [
 					{name: 'dob', op: '>'},
 					{name: 'weight', op: '>'}
 				]);
 
-    	sbi.column(['name', 'gender', 'weight']).
+    	stemp.column(['name', 'gender', 'weight']).
     	filter( orFilter );
 
     	var  cmd = {
     		op: 'query',
-    		expr: sbi.value(),
+    		expr: stemp.value(),
     		query: {dob: new Date('1990-01-01'), weight: 150}
     	};
 
@@ -74,13 +74,13 @@ describe('Test newSQL query', function()  {
     });
 
     it('non-sql appears only in where condition', function(done) {
-        var  sbi = newsql.sqlTemplate('Person');
-        sbi.column(['Person_id', 'name', 'gender']).
+        var  stemp = newsql.sqlTemplate('Person');
+        stemp.column(['Person_id', 'name', 'gender']).
         filter( {name: 'weight', op: '='} );
 
         var  cmd = {
             op: 'query',
-            expr: sbi.value(),
+            expr: stemp.value(),
             query: {weight: 130}
         };
 
@@ -96,12 +96,12 @@ describe('Test newSQL query', function()  {
 describe('Test newSQL listing', function()  {
 
     it('SQL only listing', function(done) {
-    	var  sbi = newsql.sqlTemplate('Person');
-    	sbi.column(['Person_id', 'name', 'gender']).
+    	var  stemp = newsql.sqlTemplate('Person');
+    	stemp.column(['Person_id', 'name', 'gender']).
     	filter( {name: 'dob', op: '>'} );
 
     	var  query = {dob: new Date('1990-01-01')};
-        newsql.find(sbi.value(), query, function(err, result) {
+        newsql.find(stemp.value(), query, function(err, result) {
     	//newsql.execute(cmd, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
     		assert.equal( result.length, 2, 'match 2 persons');
@@ -112,13 +112,13 @@ describe('Test newSQL listing', function()  {
     });
 
     it('Query on non-SQL columns', function(done) {
-    	var  sbi = newsql.sqlTemplate('Person');
-    	sbi.column(['name', 'gender', 'weight']).
+    	var  stemp = newsql.sqlTemplate('Person');
+    	stemp.column(['name', 'gender', 'weight']).
     	filter( {name: 'dob', op: '>'} );
 
     	var  cmd = {
     		op: 'list',
-    		expr: sbi.value(),
+    		expr: stemp.value(),
     		query: {dob: new Date('1990-01-01')}
     	};
 
@@ -133,18 +133,18 @@ describe('Test newSQL listing', function()  {
     });
 
     it('Query with ANDed non-SQL conditions', function(done) {
-    	var  sbi = newsql.sqlTemplate('Person'),
-    		 orFilter = sbi.chainFilters('AND', [
+    	var  stemp = newsql.sqlTemplate('Person'),
+    		 orFilter = stemp.chainFilters('AND', [
 					{name: 'dob', op: '<'},
 					{name: 'weight', op: '>'}
 				]);
 
-    	sbi.column(['name', 'gender', 'weight']).
+    	stemp.column(['name', 'gender', 'weight']).
     	filter( orFilter );
 
     	var  cmd = {
     		op: 'list',
-    		expr: sbi.value(),
+    		expr: stemp.value(),
     		query: {dob: new Date('1990-01-01'), weight: 150}
     	};
 
@@ -158,18 +158,18 @@ describe('Test newSQL listing', function()  {
     });
 
     it('Query with ORed non-SQL conditions', function(done) {
-    	var  sbi = newsql.sqlTemplate('Person'),
-    		 orFilter = sbi.chainFilters('OR', [
+    	var  stemp = newsql.sqlTemplate('Person'),
+    		 orFilter = stemp.chainFilters('OR', [
 					{name: 'dob', op: '>'},
 					{name: 'weight', op: '>'}
 				]);
 
-    	sbi.column(['name', 'gender', 'weight', 'dob AS birthday']).
+    	stemp.column(['name', 'gender', 'weight', 'dob AS birthday']).
     	filter( orFilter );
 
     	var  cmd = {
     		op: 'list',
-    		expr: sbi.value(),
+    		expr: stemp.value(),
     		query: {dob: new Date('1990-01-01'), weight: 150}
             //query: {weight: 150}
     	};
@@ -186,22 +186,22 @@ describe('Test newSQL listing', function()  {
     });
 
     it('Query with AND.OR non-SQL conditions', function(done) {
-    	var  sbi = newsql.sqlTemplate('Person'),
-    		 orFilter = sbi.chainFilters('OR', [
+    	var  stemp = newsql.sqlTemplate('Person'),
+    		 orFilter = stemp.chainFilters('OR', [
     		 		{name: 'gender', op: '='},
 					{name: 'weight', op: '>'}
     		 	]);
-    		 andFilter = sbi.chainFilters('AND', [
+    		 andFilter = stemp.chainFilters('AND', [
 					{name: 'dob', op: '<'},
 					orFilter
 				]);
 
-    	sbi.column(['name', 'gender', 'weight']).
+    	stemp.column(['name', 'gender', 'weight']).
     	filter( andFilter );
 
     	var  cmd = {
     		op: 'list',
-    		expr: sbi.value(),
+    		expr: stemp.value(),
     		query: {dob: new Date('1990-01-01'), weight: 200, gender: 1}
     	};
 
@@ -215,22 +215,22 @@ describe('Test newSQL listing', function()  {
     });
 
     it('Query with OR.AND non-SQL conditions', function(done) {
-    	var  sbi = newsql.sqlTemplate('Person'),
-    		 andFilter = sbi.chainFilters('AND', [
+    	var  stemp = newsql.sqlTemplate('Person'),
+    		 andFilter = stemp.chainFilters('AND', [
     		 		{name: 'gender', op: '='},
 					{name: 'weight', op: '>'}
     		 	]);
-    		 orFilter = sbi.chainFilters('or', [
+    		 orFilter = stemp.chainFilters('or', [
 					{name: 'dob', op: '>'},
 					andFilter
 				]);
 
-    	sbi.column(['name', 'gender', 'weight']).
+    	stemp.column(['name', 'gender', 'weight']).
     	filter( orFilter );
 
     	var  cmd = {
     		op: 'list',
-    		expr: sbi.value(),
+    		expr: stemp.value(),
     		query: {dob: new Date('1990-01-01'), weight: 150, gender: 1}
     	};
 
