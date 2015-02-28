@@ -11,11 +11,11 @@ The good news is we may have a third option now. Image you can store data with p
 
 + Table joins can be done now (0.0.4). Because **newsql** allows you to access "undefined" properties, the syntax is a bit different from SQL when doing table join. Check [How to do table join](#newsqlJoin) for details.
 
-+ **newsql** can do something most (if not all) NoSQL databases can not do: indexing properties of documents whenever you need to. **newsql** provides a _indexProperty()_ function to index a property when a performance boost is needed. You can drop an index by _removeIndex()_.
++ **newsql** can do something most (if not all) NoSQL databases can not do: indexing properties of documents whenever you need to. **newsql** provides a _indexProperty()_ function to index a property when a performance boost is needed. You can drop an index by _removeIndex()_ (0.0.4).
 
 ## Install
 
-**newsql** use mySQL as the underlying database engine. Throughout this document, we'll assume you have installed mySQL. With mySQL up and running, you can add the **newsql** features:
+**newsql** uses mySQL as the underlying database engine. Throughout this document, we'll assume you have installed mySQL. With mySQL up and running, you can add the **newsql** features:
 
     npm install newsql
     
