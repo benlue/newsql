@@ -7,9 +7,15 @@ When we look at the real world applications, we may find that the data model we 
 
 The good news is we may have a third option now. Image you can store data with properties not pre-defined as table columns. You can even query on those "undefined" properties. That will give you the benefits of NoSQL. On the other hand, **newsql** still exhibits the ACID properties and transactions are supported which are not available for NoSQL. Better yet, you can index any "undefined" properties whenever necessary. There are no limitations on how many indexes you can put on a table (or collection) as most NoSQL databases have imposed.
 
+## What's New
+
++ Table joins can be done now (0.0.4). Because **newsql** allows you to access "undefined" properties, the syntax is a bit different from SQL when doing table join. Check [How to do table join](#newsqlJoin) for details.
+
++ **newsql** can do something most (if not all) NoSQL databases can not do: indexing properties of documents whenever you need. **newsql** provided a _indexProperty()_ function to index a property when a property gets queried too frequently. You can drop an index by _removeIndex()_.
+
 ## Install
 
-**newsql** use mySQL as the underlying database engine. Throughout this document, we'll assume you have installed mySQL. With mySQL working, you can add the **newsql** features:
+**newsql** use mySQL as the underlying database engine. Throughout this document, we'll assume you have installed mySQL. With mySQL up and running, you can add the **newsql** features:
 
     npm install newsql
     
@@ -29,7 +35,10 @@ The good news is we may have a third option now. Image you can store data with p
   + [execute()](#apiExecute)
   + [getConnection()](#apiGetConn)
   + [sqlTemplate()](#sqlTemplate)
+  + [indexProperty()](#apiIndexProp)
+  + [removeIndex()](#apiRmIndex)
 + [How to do transactions](#transactions)
++ [How to do table join](#newsqlJoin)
 + [Examples](#examples)
 + [The query filter](#queryFilter)
 
@@ -269,6 +278,30 @@ Below is an example showing how to construct a SQL template:
          .filter( {name: 'Person_id', op: '='] )
          .value();
 
+<a name="apiIndexProp"></a>
+### indexProperty(colName, propName, propType, cb)
+This is a great tool for NoSQL developers. When working with NoSQL databases, sometimes you'd want to index a document property to improve query performance when your data grow big. Unfortunately, that's something NoSQL databases would fall short.
+
+With **newsql**, you can index (almost) any property you like by calling the _indexProperty()_ method on the property which you would like to index. The function takes four parameters. **_colName_** is the name of the collection and **_propName__** is the name of the property to be indexed. **_propTyoe_** is a JSON object to specify the data type of the property so it can be properly indexed. The **_propTyoe_** parameter has three properties of its own:
+
++ **type**: data type of a property. Possible values are 'boolean', 'integer', 'number', and 'string'. This is required.
++ **format**: provides additional information about the data type of a property. If the data type is 'integer', format can be 'int8', 'int16', or 'int64' and those will be mapped to 'tinyint', 'smallint' and 'bigint' respectively. If the data type is 'number', format can be 'double', 'float' or 'decimal(n,s)'. For 'string' data type, format can be 'text'.
++ **maxLength**: if data type is 'string', this property can be used to specify the maximum length of a string property. For example, {type: 'string', maxLength: 32} means it's a string property with length no longer than 32. That's actually what we call varchar(32) in SQL.
+
+Let's have some sample code below:
+    
+    newsql.indexProperty('PersonDoc', 'weight', 
+                         {type: 'integer'}, function(err) {
+        if (err)
+            console.log( err.stack );
+        else
+            // we've truned the weight property into indexed
+    });
+   
+<a name="apiRmIndex"></a>
+### removeIndex(colName, propName, cb)
+Contrary to _indexProperty()_, this function remove an index (the property data will NOT be lost). This function should be rarely used.
+ 
 <a name="transactions"></a>
 ## How to do transactions
 Doing transaction is faily simple. All you need to do is to obtain a database connection and pass it to _newsql.execute()_. Below is the sample code:
@@ -294,6 +327,29 @@ Doing transaction is faily simple. All you need to do is to obtain a database co
         };
     });
     
+<a name="newsqlJoin"></a>
+## How to do table join
+Just like relational databases, **newsql** supports table join. Even if you use **newsql** in NoSQL style, you can join collections if you store docyment keys of one collection in another.
+
+The following sample code shows how to do table join with **newsql**:
+
+    var  stemp = newsql.sqlTempalte('Person AS psn');
+    stemp.join( {table: 'Company AS cpy', 
+                 onWhat: 'psn.workFor=cpy.Company_id'})
+         .column(['name', 'salary', 'cpy.name AS companyName']).
+         .filter({name: 'cpy.size', op: '>'});
+         
+The above SQL template is the same as:
+
+    SELECT name, salary, cpy.name AS companyName
+    FROM Person AS psn
+    JOIN Company AS cpy on psn.workFor=cpy.Company_id
+    WHERE cpy.size > ?;
+    
+So it's almost the same as table join in SQL as you might have observed. However, there is one big difference to watch out. When doing join in SQL, column names do not have to be prefixed with table name if there are no ambiguities. In **newsql**, you always have to prefix a column name with its table name if the column is not of the base table. That's becuase **newsql** allows you to read/write properties not defined as table columns. As a result, when a column name is not prefixed with its table name, **newsql** will treat it as the "undefined" properties of the base table instead of trying to interpret the column as belonging to the joined table(s).
+
+In short, when doing join in **newsql** always prefix columns of non-base tables with their table name.
+
 <a name="examples"></a>
 ## Example
 Assuming you have a table created with the following statement:
