@@ -8,6 +8,9 @@ When we look at the real world applications, we may find that the data model we 
 The good news is we may have a third option now. Image you can store data with properties not pre-defined as table columns. You can even query on those "undefined" properties. That will give you the benefits of NoSQL. On the other hand, **newsql** still exhibits the ACID properties and transactions are supported which are not available for NoSQL. Better yet, you can index any "undefined" properties whenever necessary. There are no limitations on how many indexes you can put on a table (or collection) as most NoSQL databases have imposed.
 
 ## What's New
+Detailed info of each release is manifested in [release notes](https://github.com/benlue/newsql/blob/master/ReleaseNotes.md). Below are some highlights:
+
++ The signature of the _execute()_ function was changed to make it easier to resue SQL templates. The old format still works, but is deprecated (0.0.5).
 
 + Table joins can be done now (0.0.4). Because **newsql** allows you to access "undefined" properties, the syntax is a bit different from SQL when doing table join. Check [How to do table join](#newsqlJoin) for details.
 
@@ -249,16 +252,18 @@ Again, the above example is equivalent to the following SQL statement:
     WHERE status = 'closed';
     
 <a name="apiExecute"></a>
-### execute(cmd, cb)
+### execute(cmd, data, query cb)
 Besides the _find()_, _insert()_, _update()_, and _delete()_ functions, you can simple use _execute()_ to perform any of the CRUD operations. Actually, _find()_, _insert()_, _update()_, and _delete()_ are just wrappers around the _execute()_ function.
 
-_cmd_ is a command object to the _execute()_ function. It has the following properties:
+The **_data_** parameter is a JSON object which contains data to be inserted or updated to a table (or documents). The **_query_** parameter is a JSON object which specifies actual query values. **_cmd_** is a command object to the _execute()_ function. It has the following properties:
 
 + **op**: specifies which CRUD operations will be performed. It should be one of the following: 'query', 'list', 'insert', 'update' and 'delete'.
-+ **expr**: a SQL expression which can be built using SQL templates. As shown in the sample code of [find()](#newsqlFind). This property is required for the 'query', 'list' and 'update' operations.
-+ **data**: the actual data to be inserted or update. This property is only needed for the 'insert' and 'update' operation.
-+ **query**: the actual values to be applied to the query condition. This property is required for the 'query', 'list', 'update' and 'delete' operations.
++ **expr**: a SQL expression which can be built using SQL templates. As shown in the sample code of [find()](#newsqlFind). 
 + **conn**: a database connection object. You usually don't have to specify this property unless you want to do transactions.
+
+If the **_data_** parameter is not needed, the function can be simplified to _execute(cmd, query, cb)_.
+
+_cb_ is the callback function which receives an error and sometimes a result object (when it's a query, list or insert operation).
 
 <a name="apiGetConn"></a>
 ### getConnection(cb)

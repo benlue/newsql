@@ -1,3 +1,9 @@
+## 0.0.5
+
++ taking advantages of the latest SOAR release (1.1.5) for performance improvement.
+
++ changing the signature of the _execute()_ function so it's easier to reuse SQL templates. The old format still works, but is deprecated.
+
 ## 0.0.4
 
 + Made table join work.

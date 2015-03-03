@@ -47,12 +47,12 @@ describe('Test newSQL update', function()  {
 	    	filter( {name: 'Person_id', op: '='} );
 
 	    	var  qcmd = {
-	    		op: 'query',
-	    		expr: stemp.value(),
-	    		query: {Person_id: 7}
-	    	};
+		    		op: 'query',
+		    		expr: stemp.value()
+	    		 },
+	    		 query = {Person_id: 7};
 
-	    	newsql.execute(qcmd, function(err, result) {
+	    	newsql.execute(qcmd, query, function(err, result) {
 	    		assert.equal(result.dob.toString().indexOf('Wed Apr 01'), 0, 'dob not correct');
 
 	    		data = {dob: '1992-04-21'};
@@ -67,7 +67,7 @@ describe('Test newSQL update', function()  {
 describe('Test newSQL update', function()  {
 	it('Insert & update with transactions', function(done) {
 		var  data = {name: 'David', dob: '1988-12-05', gender: 1, skill: ['node.js', 'Java'], weight: 80},
-			 cmd = {op: 'insert', entity: 'Person', data: data};
+			 cmd = {op: 'insert', expr: newsql.sqlTemplate('Person').value()};
 
 		newsql.getConnection(function(err, conn) {
 			assert(!err, 'Failed to get connection');
@@ -76,14 +76,16 @@ describe('Test newSQL update', function()  {
 			conn.beginTransaction(function(err) {
 				assert(!err, 'Failed to begin transaction');
 
-				newsql.insert(cmd, function(err, pk) {
+				newsql.insert(cmd, data, function(err, pk) {
 					assert(!err, 'Failed to insert');
 					//console.log('new entity id is %s', JSON.stringify(pk, null, 4));
 
-					var  filter = {name: 'Person_id', op: '='},
-						 delCmd = {op: 'delete', entity: 'Person', filter: filter, query: pk, conn: conn};
+					var  stemp = newsql.sqlTemplate('Person');
+					stemp.filter({name: 'Person_id', op: '='});
 
-					newsql.del(delCmd, function(err) {
+					var  delCmd = {op: 'delete', expr: stemp.value(), conn: conn};
+
+					newsql.del(delCmd, pk, function(err) {
 						assert(!err, 'cannot delete successfully');
 						conn.commit(function(err) {
 							assert(!err, 'Failed to commit');
@@ -102,7 +104,10 @@ describe('Test newSQL update', function()  {
 				]},
 			 data = {dob: '1992-04-01'},
 			 query = {weight: 180, gender: 1},
-			 cmd = {op: 'update', entity: 'Person', data: data, filter: andFilter, query: query};
+			 stemp = newsql.sqlTemplate('Person');
+
+		stemp.filter( andFilter );
+		var  cmd = {op: 'update', expr: stemp.value()};
 
 		newsql.getConnection(function(err, conn) {
 			assert(!err, 'Failed to get connection');
@@ -111,22 +116,21 @@ describe('Test newSQL update', function()  {
 			conn.beginTransaction(function(err) {
 				assert(!err, 'Failed to begin transaction');
 
-				newsql.update(cmd, function(err) {
+				newsql.update(cmd, data, query, function(err) {
 					var  sqlExpr = newsql.sqlTemplate('Person').column(['dob']).
 			    	filter( {name: 'Person_id', op: '='} ).value();
 
 			    	var  qcmd = {
-			    		op: 'query',
-			    		expr: sqlExpr,
-			    		query: {Person_id: 7},
-			    		conn: conn
-			    	};
+				    		op: 'query',
+				    		expr: sqlExpr,
+				    		conn: conn
+			    		 },
+			    		 query = {Person_id: 7};
 
-			    	newsql.execute(qcmd, function(err, result) {
+			    	newsql.execute(qcmd, query, function(err, result) {
 			    		assert.equal(result.dob.toString().indexOf('Wed Apr 01'), 0, 'dob not correct');
 
-			    		cmd.data = {dob: '1992-04-21'};
-			    		newsql.update(cmd, function(err) {
+			    		newsql.update(cmd, {dob: '1992-04-21'}, query, function(err) {
 			    			assert(!err, 'cannot update successfully');
 							conn.commit(function(err) {
 								assert(!err, 'Failed to commit');
