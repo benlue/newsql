@@ -21,6 +21,19 @@ INSERT INTO Person (Person_id, name, dob, gender, workFor) VALUES
 (10, 'Rebecca', '1972-06-25', 0, 5),
 (11, 'Roger', '1977-07-18', 1, 3);
 
+INSERT INTO PersonSQL (Person_id, name, dob, gender, workFor) VALUES
+(1, 'Mike', '1978-02-12', 1, 4),
+(2, 'Stacy', '1965-12-30', 0, 3),
+(3, 'Mark', '1982-10-05', 1, 8),
+(4, 'Johnson', '1962-08-10', 1, 6),
+(5, 'Eugene', '1988-05-20', 1, 1),
+(6, 'Kate', '1982-11-25', 0, 1),
+(7, 'Chris', '1992-04-21', 1, 3),
+(8, 'Donald', '1990-01-31', 1, 7),
+(9, 'Michelle', '1983-03-11', 0, 2),
+(10, 'Rebecca', '1972-06-25', 0, 5),
+(11, 'Roger', '1977-07-18', 1, 3);
+
 INSERT INTO PersonDoc (name, dob, gender, workFor) VALUES
 ('Mike', '1978-02-12', 1, 4),
 ('Stacy', '1965-12-30', 0, 3),

@@ -10,6 +10,8 @@ The good news is we may have a third option now. Image you can store data with p
 ## What's New
 Detailed info of each release is manifested in [release notes](https://github.com/benlue/newsql/blob/master/ReleaseNotes.md). Below are some highlights:
 
++ **newsql** can now correctly access your existing mySQL tables. If you try to update your existing tables with **newsql**, **newsql** will automatically convert your table to be newsql enbaled. You can turn this feature off (0.0.5).
+
 + The signature of the _execute()_ function was changed to make it easier to resue SQL templates. The old format still works, but is deprecated (0.0.5).
 
 + Table joins can be done now (0.0.4). Because **newsql** allows you to access "undefined" properties, the syntax is a bit different from SQL when doing table join. Check [How to do table join](#newsqlJoin) for details.
@@ -128,7 +130,7 @@ It's also possible to find out the structure of a table. You can use _newsql.des
 
 <a name="newsqlConfig"></a>
 ## Setup and configure
-Before **newsql** do the magical things for you, you have to configure it to talk to the database. Below **newsql** is the mySQL DBMS, so you have to setup a mySQL database and configure **newsql** to work with that database.
+Before **newsql** do the magical things for you, you have to configure it to talk to the database. Beneath **newsql** is the mySQL DBMS, so you have to setup a mySQL database and configure **newsql** to work with that database.
 
 Assuming you have setup mySQL and created a database called 'mySample', then you can configure **newsql** to access that database. Like [SOAR](https://github.com/benlue/soar), there are two ways to specify the database configuration: using a config file or doing it programmatically.
 
@@ -144,10 +146,16 @@ In the newsql package root directory, there is a **config.json** file to specify
     		"password" : "your_passwd",
     		"supportBigNumbers" : true,
     		"connectionLimit"   : 32
-    	}
+    	},
+        "queryLimit": 100,
+        "autoConvert": true
     }
 
 where host is the database host and database is the database name. user and password are the database user name and password respectively. **newsql** will automatically turn on the connection pool for better performance.
+
+_queryLimit_ specifies how may data entries will be brought in memory to do object queries. If this number is set too low, your query may return only part of the results. The default value is set to 100.
+
+_autoConvert_ is a flag to instruct **newsql** if it should automatically convert a plain SQL table to be newsql enabled. If you don't want **newsql** to do that, you can set _autoConvert_ to false. _autoConvert_ is default true.
 
 <a name="configPro""></a>
 ### Configure programmatically
@@ -155,14 +163,16 @@ You can configure the database connection settings right inside your node progra
 
     var  newsql = require('newsql');
     var  options = {
-                dbConfig: {
-                    "host"     : "127.0.0.1",
-                    "database" : "mySample",
-                    "user"     : "your_acc_name",
-                    "password" : "your_passwd",
-                    "supportBigNumbers" : true,
-                    "connectionLimit"   : 32
-                }
+            dbConfig: {
+                "host"     : "127.0.0.1",
+                "database" : "mySample",
+                "user"     : "your_acc_name",
+                "password" : "your_passwd",
+                "supportBigNumbers" : true,
+                "connectionLimit"   : 32
+            },
+            "queryLimit": 100,
+            "autoConvert": true
          };
 
     newsql.config( options );

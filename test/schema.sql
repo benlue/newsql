@@ -28,6 +28,20 @@ create table Person
 engine = InnoDB;
 
 /*==============================================================*/
+/* Table: PersonSQL                                              */
+/*==============================================================*/
+create table PersonSQL
+(
+   Person_id            bigint not null auto_increment,
+   name                 varchar(64),
+   dob                  date,
+   gender               tinyint,
+   workFor              bigint,
+   primary key (Person_id)
+)
+engine = InnoDB;
+
+/*==============================================================*/
 /* Table: PersonDoc                                             */
 /*==============================================================*/
 create table PersonDoc

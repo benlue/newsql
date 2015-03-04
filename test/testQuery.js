@@ -94,7 +94,6 @@ describe('Test newSQL query', function()  {
 
 
 describe('Test newSQL listing', function()  {
-
     it('SQL only listing', function(done) {
     	var  stemp = newsql.sqlTemplate('Person');
     	stemp.column(['Person_id', 'name', 'gender']).
@@ -237,10 +236,6 @@ describe('Test newSQL listing', function()  {
     	newsql.execute(cmd, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
     		assert.equal( result.length, 3, 'match 3 persons');
-    		/*
-    		assert.equal( result[0].name, 'Stacy', 'first match is Stacy');
-    		assert.equal( result[1].name, 'Mark', 'second match is Mark');
-    		*/
 			done();
     	});
     });
