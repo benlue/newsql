@@ -1,6 +1,10 @@
+## 0.0.6
+
++ Fixed a bug when doing deeply compounded query (AND/OR filters).
+
 ## 0.0.5
 
-+ Existing SQL tables can be automatically converted to become **newsql** compatible. This can be turned off by _config()_.
++ Existing SQL tables can be automatically converted to become **newsql** compatible. This can be turned off by _config({autoConvert: false})_.
 
 + taking advantages of the latest SOAR release (1.1.6) for performance improvement.
 
