@@ -1,3 +1,7 @@
+## 0.0.7
+
++ Fixed a bug which failed to release db connections and caused **newsql** to stall.
+
 ## 0.0.6
 
 + Fixed a bug when doing deeply compounded query (AND/OR filters).

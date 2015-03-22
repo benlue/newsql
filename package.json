@@ -1,6 +1,6 @@
 {
   "name": "newsql",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Get the best of both worlds",
   "engines": "0.10.21",
   "main": "lib/newsql.js",
@@ -24,6 +24,6 @@
     "async": "^0.9.0",
     "jsonfp": "^0.1.2",
     "lodash": "^3.0.1",
-    "soarjs": "^1.1.8"
+    "soarjs": "^1.1.10"
   }
 }
