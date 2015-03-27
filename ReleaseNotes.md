@@ -1,3 +1,7 @@
+## 0.0.8
+
++ Fixed a bug which could possibly lose not pre-defined clumn (property) values if not all of the un-predefined properties are updated.
+
 ## 0.0.7
 
 + Fixed a bug which failed to release db connections and caused **newsql** to stall.

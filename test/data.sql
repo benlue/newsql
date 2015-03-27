@@ -65,7 +65,7 @@ UPDATE Person SET _c_json='{"weight": 180}' WHERE Person_id=7;
 UPDATE Person SET _c_json='{"salary": 80000}' WHERE Person_id=8;
 UPDATE Person SET _c_json='{"hobby": "music", "weight": 130}' WHERE Person_id=9;
 UPDATE Person SET _c_json='{"salary": 180000, "weight": 140}' WHERE Person_id=10;
-UPDATE Person SET _c_json='{"hobby": "reading"}' WHERE Person_id=11;
+UPDATE Person SET _c_json='{"hobby": "reading", "weight": 200}' WHERE Person_id=11;
 
 UPDATE PersonDoc SET _c_json='{"salary": 110000}' WHERE id=1;
 UPDATE PersonDoc SET _c_json='{"hobby": "reading", "weight": 220}' WHERE id=2;

@@ -149,7 +149,7 @@ describe('Test newSQL listing', function()  {
 
     	newsql.execute(cmd, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
-    		assert.equal( result.length, 2, 'match 2 persons');
+    		assert.equal( result.length, 3, 'match 3 persons');
     		assert.equal( result[0].name, 'Stacy', 'first match is Stacy');
     		assert.equal( result[1].name, 'Mark', 'second match is Mark');
 			done();
@@ -175,7 +175,7 @@ describe('Test newSQL listing', function()  {
 
     	newsql.execute(cmd, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
-    		assert.equal( result.length, 4, 'match 4 persons');
+    		assert.equal( result.length, 5, 'match 5 persons');
     		assert.equal( result[0].name, 'Stacy', 'first match is Stacy');
     		assert.equal( result[1].name, 'Mark', 'second match is Mark');
     		assert.equal( result[2].name, 'Chris', '3rd match is Chris');
@@ -235,7 +235,7 @@ describe('Test newSQL listing', function()  {
 
     	newsql.execute(cmd, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
-    		assert.equal( result.length, 3, 'match 3 persons');
+    		assert.equal( result.length, 4, 'match 4 persons');
 			done();
     	});
     });
@@ -265,9 +265,10 @@ describe('Test newSQL listing', function()  {
 
         newsql.execute(cmd, function(err, list) {
             //console.log( JSON.stringify(list, null, 2) );
-            assert.equal(list.length, 3, 'total of 3 matches');
+            assert.equal(list.length, 4, 'total of 4 matches');
             assert.equal(list[2].weight, 180, 'Person #3 weighted 180 pounds.');
             done();
         });
     });
+
 });

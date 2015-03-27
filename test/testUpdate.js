@@ -12,6 +12,7 @@ before(function() {
 });
 
 describe('Test newSQL update', function()  {
+
 	it('Insert', function(done) {
 		var  data = {name: 'David', dob: '1988-12-05', gender: 1, skill: ['node.js', 'Java'], weight: 80};
 
@@ -62,10 +63,35 @@ describe('Test newSQL update', function()  {
 	    	});
 		});
 	});
+
+	it('update part of the non-SQL columns', function(done) {
+		var  data = {hobby: 'hiking'},
+			 query = {Person_id: 9},
+			 filter = {name: 'Person_id', op: '='};
+
+		newsql.update('Person', data, filter, query, function(err) {
+			var  sqlExpr = newsql.sqlTemplate('Person')
+	    						 .filter( {name: 'Person_id', op: '='} ).value(),
+	    		 qcmd = {
+		    		op: 'query',
+		    		expr: sqlExpr
+	    		 };
+
+	    	newsql.execute(qcmd, query, function(err, result) {
+	    		assert.equal(result.weight, 130, 'weight is not changed');
+	    		assert.equal(result.hobby, 'hiking', 'hobby becomes hiking');
+
+	    		data.hobby = 'music';
+	    		newsql.update('Person', data, filter, query, function(err) {
+	    			done();
+	    		});
+	    	});
+		});
+	});
 });
 
 describe('Test newSQL update', function()  {
-	it('Insert & update with transactions', function(done) {
+	it('Insert & delete with transactions', function(done) {
 		var  data = {name: 'David', dob: '1988-12-05', gender: 1, skill: ['node.js', 'Java'], weight: 80},
 			 cmd = {op: 'insert', expr: newsql.sqlTemplate('Person').value()};
 
@@ -88,6 +114,7 @@ describe('Test newSQL update', function()  {
 					newsql.del(delCmd, pk, function(err) {
 						assert(!err, 'cannot delete successfully');
 						conn.commit(function(err) {
+							conn.release();
 							assert(!err, 'Failed to commit');
 							done();
 						});
@@ -133,6 +160,7 @@ describe('Test newSQL update', function()  {
 			    		newsql.update(cmd, {dob: '1992-04-21'}, query, function(err) {
 			    			assert(!err, 'cannot update successfully');
 							conn.commit(function(err) {
+								conn.release();
 								assert(!err, 'Failed to commit');
 								done();
 							});
