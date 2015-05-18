@@ -345,7 +345,7 @@ Example:
 
 <a name="findOne"></a>
 #### findOne(expr, query, cb)
-If you exepct your query should return just one data instance, you can use _findOne()_ instead of _find()_. **_expr_** can be the table name (collection name) or a SQL expression which can be built by [soar.sql()](#sqlTemplate). **_query_** is the actual value to be applied to the query condition. **_cb(err, list)_** is a callback function which receives an error (if any) and an array of returned data.
+If you exepct your query should return just one data instance, you can use _findOne()_ instead of _find()_. **_expr_** can be the table name (collection name) or a SQL expression which can be built by [soar.sql()](#soarSBI). **_query_** is the actual value to be applied to the query condition. **_cb(err, list)_** is a callback function which receives an error (if any) and an array of returned data.
 
 Example:
 
@@ -362,7 +362,7 @@ In the above example, we use a SQL expression to compose a query  which is almos
 
 <a name="newsqlFind"></a>
 #### find(expr, query, cb)
-**_expr_** can be the table name (collection name) or a SQL expression which can be built by [soar.sql()](#sqlTemplate). **_query_** is the actual value to be applied to the query condition. **_cb(err, list)_** is a callback function which receives an error (if any) and an array of returned data.
+**_expr_** can be the table name (collection name) or a SQL expression which can be built by [newsql.sql()](#soarSBI). **_query_** is the actual value to be applied to the query condition. **_cb(err, list)_** is a callback function which receives an error (if any) and an array of returned data.
 
 Example:
 
@@ -388,7 +388,7 @@ The above example can be programmed in a more concise way:
 
 <a name="apiInsert"></a>
 #### insert(expr, data, cb)
-The _insert()_ function can insert an entity to a table or add a document to a collection (depending on you view it as a SQL or NoSQL operation). **_expr_** can be the table name (collection name) which a new entry will be inserted into or a SQL expression which can be built by [soar.sql()](#sqlTemplate). **_data_** is a plain JSON object containing data to be inserted. _cb(err, entityKey)_ is a callback function which recevies an error (if any) and an **_entityKey_** object. **_entityKey_** is the object of table's primary keys and their values from the newly inserted entity. For NoSQL collections, **_entityKey_** should look like {id: docID} where **_docID_** is a serial number for the inserted document.
+The _insert()_ function can insert an entity to a table or add a document to a collection (depending on you view it as a SQL or NoSQL operation). **_expr_** can be the table name (collection name) which a new entry will be inserted into or a SQL expression which can be built by [newsql.sql()](#soarSBI). **_data_** is a plain JSON object containing data to be inserted. _cb(err, entityKey)_ is a callback function which recevies an error (if any) and an **_entityKey_** object. **_entityKey_** is the object of table's primary keys and their values from the newly inserted entity. For NoSQL collections, **_entityKey_** should look like {id: docID} where **_docID_** is a serial number for the inserted document.
 
 Example:
 
@@ -410,7 +410,7 @@ Example:
 
 <a name="apiUpdate"></a>
 #### update(expr, data, query, cb)
-The _update()_ function can update a table entity or a doument in a colletion. **_expr_** can be the table name (collection name) whose data will be updatd or a SQL expression which can be built by [soar.sql()](#sqlTemplate). **_data_** is a plain object containing update data. **_query_** is the actual value to be applied to the query condition. **_cb(err)_** is a callback function which receives an error object (if errors occurred).
+The _update()_ function can update a table entity or a doument in a colletion. **_expr_** can be the table name (collection name) whose data will be updatd or a SQL expression which can be built by [newsql.sql()](#soarSBI). **_data_** is a plain object containing update data. **_query_** is the actual value to be applied to the query condition. **_cb(err)_** is a callback function which receives an error object (if errors occurred).
 
 Example:
 
@@ -431,7 +431,7 @@ The above example is similar to the following SQL statement:
     
 <a name="apiDel"></a>
 #### del(tbName, query, cb)
-The _del()_ function can delete table entities or documents. **_expr_** can be the table name (collection name) whose data will be deleted or a SQL expression which can be built by [soar.sql()](#sqlTemplate). **_query_** is the actual value to be applied to the query condition. _cb(err)_ is a callback function which receives an error object (if errors occurred).
+The _del()_ function can delete table entities or documents. **_expr_** can be the table name (collection name) whose data will be deleted or a SQL expression which can be built by [newsql.sql()](#soarSBI). **_query_** is the actual value to be applied to the query condition. _cb(err)_ is a callback function which receives an error object (if errors occurred).
 
 Example:
 
