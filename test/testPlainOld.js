@@ -38,10 +38,9 @@ describe('Test if newsql works with plain old SQL tables', function()  {
 	});
 
 	it('Delete', function(done) {
-		var  filter = {name: 'Person_id', op: '>'},
-			 query = {Person_id: 11};
+		var  query = {Person_id: {op: '>', value: 11}};
 
-		newsql.del('PersonSQL', filter, query, function(err, result) {
+		newsql.del('PersonSQL', query, function(err, result) {
 			//assert(!err, 'cannot delete successfully');
 			//console.log(JSON.stringify(result, null, 2));
 			done();
@@ -55,29 +54,27 @@ describe('Test if newsql works with plain old SQL tables', function()  {
 
     	var  cmd = {
     		op: 'query',
-    		expr: stemp.value(),
-    		query: {dob: new Date('1990-01-01')}
-    	};
+    		expr: stemp.value()
+    	},
+		query = {dob: new Date('1990-01-01')};
 
-    	newsql.execute(cmd, function(err, result) {
+    	newsql.execute(cmd, query, function(err, result) {
     		assert.equal(result.name, 'Chris', 'Only Chris is this young');
     		done();
     	});
     });
 
     it('Update', function(done) {
-		var  filter = {name: 'Person_id', op: '='},
-			 data = {dob: '1992-04-01'},
+		var  data = {dob: '1992-04-01'},
 			 query = {Person_id: 7};
 
-		newsql.update('PersonSQL', data, filter, query, function(err) {
-			var  stemp = newsql.sqlTemplate('PersonSQL');
-	    	stemp.column(['dob']).
-	    	filter( {name: 'Person_id', op: '='} );
+		newsql.update('PersonSQL', data, query, function(err) {
+			var  expr = newsql.sql('PersonSQL')
+	    					   .column(['dob']);
 
 	    	var  qcmd = {
 		    		op: 'query',
-		    		expr: stemp.value()
+		    		expr: expr.value()
 	    		 },
 	    		 query = {Person_id: 7};
 
@@ -85,7 +82,7 @@ describe('Test if newsql works with plain old SQL tables', function()  {
 	    		assert.equal(result.dob.toString().indexOf('Wed Apr 01'), 0, 'dob not correct');
 
 	    		data = {dob: '1992-04-21'};
-	    		newsql.update('PersonSQL', data, filter, query, function(err) {
+	    		newsql.update('PersonSQL', data, query, function(err) {
 	    			done();
 	    		});
 	    	});

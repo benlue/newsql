@@ -15,39 +15,39 @@ before(function() {
 describe('Test compunded query conditions', function()  {
 
     it('AND-OR', function(done) {
-    	var  stemp = newsql.sqlTemplate('Person')
-    					   .column(['Person_id', 'name', 'gender']),
-    		 orFilter = stemp.chainFilters('OR', [
+    	var  orFilter = newsql.chainFilters('OR', [
 	    		 			{name: 'salary', op: '>'},
 	    		 			{name: 'weight', op: '<'}
     		 			]),
-    		 andFilter = stemp.chainFilters('AND', [
+    		 andFilter = newsql.chainFilters('AND', [
     		 				orFilter,
     		 				{name: 'gender', op: '&'}
-    		 			]);
-    	stemp.filter( andFilter );
+    		 			]),
+             expr = newsql.sql('Person')
+                          .column(['Person_id', 'name', 'gender'])
+    	                  .filter( andFilter );
     			   
     	var  cmd = {
     		op: 'list',
-    		expr: stemp.value(),
-    		query: {salary: 100000, weight: 200, gender: 1}
-    	};
+    		expr: expr.value()
+    	},
+        query = {salary: 100000, weight: 200, gender: 1};
 
-    	newsql.execute(cmd, function(err, list) {
+    	newsql.execute(cmd, query, function(err, list) {
     		//console.log(JSON.stringify(list, null, 4));
-    		assert.equal(list.length, 4, '4 matches');
+    		assert.equal(list.length, 5, '5 matches');
     		done();
     	});
     });
-
+ 
     it('AND-OR case #2', function(done) {
     	var  stemp = newsql.sqlTemplate('Person')
     					   .column(['Person_id', 'name', 'gender']),
-    		 orFilter = stemp.chainFilters('OR', [
+    		 orFilter = newsql.chainFilters('OR', [
 	    		 			{name: 'salary', op: '>'},
 	    		 			{name: 'gender', op: '&'}
     		 			]),
-    		 andFilter = stemp.chainFilters('AND', [
+    		 andFilter = newsql.chainFilters('AND', [
     		 				orFilter,
     		 				{name: 'weight', op: '<'}
     		 			]);
@@ -55,13 +55,13 @@ describe('Test compunded query conditions', function()  {
     			   
     	var  cmd = {
     		op: 'list',
-    		expr: stemp.value(),
-    		query: {salary: 100000, weight: 200, gender: 1}
-    	};
+    		expr: stemp.value()
+    	},
+        query = {salary: 100000, weight: 200, gender: 1}
 
-    	newsql.execute(cmd, function(err, list) {
+    	newsql.execute(cmd, query, function(err, list) {
     		//console.log(JSON.stringify(list, null, 4));
-    		assert.equal(list.length, 3, '3 matches');
+    		assert.equal(list.length, 4, '4 matches');
     		done();
     	});
     });
@@ -81,11 +81,11 @@ describe('Test compunded query conditions', function()  {
     			   
     	var  cmd = {
     		op: 'list',
-    		expr: stemp.value(),
-    		query: {salary: 100000, weight: 200, gender: 1}
-    	};
+    		expr: stemp.value()
+    	},
+        query = {salary: 100000, weight: 200, gender: 1};
 
-    	newsql.execute(cmd, function(err, list) {
+    	newsql.execute(cmd, query, function(err, list) {
     		//console.log(JSON.stringify(list, null, 4));
     		assert.equal(list.length, 8, '8 matches');
     		done();
@@ -107,14 +107,15 @@ describe('Test compunded query conditions', function()  {
     			   
     	var  cmd = {
     		op: 'list',
-    		expr: stemp.value(),
-    		query: {salary: 100000, weight: 200, gender: 1}
-    	};
+    		expr: stemp.value()
+    	},
+        query = {salary: 100000, weight: 200, gender: 1}
 
-    	newsql.execute(cmd, function(err, list) {
+    	newsql.execute(cmd, query, function(err, list) {
     		//console.log(JSON.stringify(list, null, 4));
-    		assert.equal(list.length, 6, '6 matches');
+    		assert.equal(list.length, 7, '7 matches');
     		done();
     	});
     });
+
 });

@@ -15,17 +15,18 @@ before(function() {
 describe('Test newSQL query', function()  {
 
     it('SQL only query', function(done) {
-    	var  stemp = newsql.sqlTemplate('Person');
-    	stemp.column(['Person_id', 'name', 'gender']).
-    	filter( {name: 'dob', op: '>'} );
+    	var  expr = newsql.sqlTemplate('Person')
+    	                  .column(['Person_id', 'name', 'gender'])
+    	                  .filter( {name: 'dob', op: '>'} );
 
     	var  cmd = {
-    		op: 'query',
-    		expr: stemp.value(),
-    		query: {dob: new Date('1990-01-01')}
-    	};
+        		op: 'query',
+        		expr: expr.value()
+        	 },
+             query = {dob: new Date('1990-01-01')};
 
-    	newsql.execute(cmd, function(err, result) {
+    	newsql.execute(cmd, query, function(err, result) {
+            //console.log(JSON.stringify(result, null, 4));
     		assert.equal(result.name, 'Chris', 'Only Chris is this young');
     		done();
     	});
@@ -38,11 +39,11 @@ describe('Test newSQL query', function()  {
 
     	var  cmd = {
     		op: 'query',
-    		expr: stemp.value(),
-    		query: {dob: new Date('1990-01-01')}
-    	};
+    		expr: stemp.value()
+    	},
+        query = {dob: new Date('1990-01-01')};
 
-    	newsql.execute(cmd, function(err, result) {
+    	newsql.execute(cmd, query, function(err, result) {
     		assert.equal(result.name, 'Chris', 'Only Chris is this young');
 			assert.equal(result.weight, 180, 'Chris weighted 180 pounds.');
 			done();
@@ -61,11 +62,11 @@ describe('Test newSQL query', function()  {
 
     	var  cmd = {
     		op: 'query',
-    		expr: stemp.value(),
-    		query: {dob: new Date('1990-01-01'), weight: 150}
-    	};
+    		expr: stemp.value()
+    	},
+        query = {dob: new Date('1990-01-01'), weight: 150};
 
-    	newsql.execute(cmd, function(err, result) {
+    	newsql.execute(cmd, query, function(err, result) {
     		assert.equal(result.name, 'Chris', 'Only Chris is this young');
 			assert.equal(result.weight, 180, 'Chris weighted 180 pounds.');
 			//console.log( JSON.stringify(result, null, 2) );
@@ -80,27 +81,28 @@ describe('Test newSQL query', function()  {
 
         var  cmd = {
             op: 'query',
-            expr: stemp.value(),
-            query: {weight: 130}
-        };
+            expr: stemp.value()
+        },
+        query = {weight: 130};
 
-        newsql.execute(cmd, function(err, result) {
+        newsql.execute(cmd, query, function(err, result) {
             //console.log(JSON.stringify(result, null, 2));
             assert.equal(result.name, 'Michelle', 'Michelle is 130 pounds');
             done();
         });
     });
+
 });
 
 
 describe('Test newSQL listing', function()  {
     it('SQL only listing', function(done) {
-    	var  stemp = newsql.sqlTemplate('Person');
-    	stemp.column(['Person_id', 'name', 'gender']).
-    	filter( {name: 'dob', op: '>'} );
+    	var  stemp = newsql.sql('Person')
+    	                   .column(['Person_id', 'name', 'gender'])
+    	                   .filter( {name: 'dob', op: '>'} );
 
     	var  query = {dob: new Date('1990-01-01')};
-        newsql.find(stemp.value(), query, function(err, result) {
+        newsql.find(stemp, query, function(err, result) {
     	//newsql.execute(cmd, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
     		assert.equal( result.length, 2, 'match 2 persons');
@@ -117,11 +119,11 @@ describe('Test newSQL listing', function()  {
 
     	var  cmd = {
     		op: 'list',
-    		expr: stemp.value(),
-    		query: {dob: new Date('1990-01-01')}
-    	};
+    		expr: stemp.value()
+    	},
+        query = {dob: new Date('1990-01-01')};
 
-    	newsql.execute(cmd, function(err, result) {
+    	newsql.execute(cmd, query, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
     		assert.equal( result.length, 2, 'match 2 persons');
     		assert.equal( result[0].name, 'Chris', 'first match is Chris');
@@ -143,11 +145,11 @@ describe('Test newSQL listing', function()  {
 
     	var  cmd = {
     		op: 'list',
-    		expr: stemp.value(),
-    		query: {dob: new Date('1990-01-01'), weight: 150}
-    	};
+    		expr: stemp.value()
+    	},
+        query = {dob: new Date('1990-01-01'), weight: 150};
 
-    	newsql.execute(cmd, function(err, result) {
+    	newsql.execute(cmd, query, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
     		assert.equal( result.length, 3, 'match 3 persons');
     		assert.equal( result[0].name, 'Stacy', 'first match is Stacy');
@@ -168,12 +170,11 @@ describe('Test newSQL listing', function()  {
 
     	var  cmd = {
     		op: 'list',
-    		expr: stemp.value(),
-    		query: {dob: new Date('1990-01-01'), weight: 150}
-            //query: {weight: 150}
-    	};
+    		expr: stemp.value()
+    	},
+        query = {dob: new Date('1990-01-01'), weight: 150};
 
-    	newsql.execute(cmd, function(err, result) {
+    	newsql.execute(cmd, query, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
     		assert.equal( result.length, 5, 'match 5 persons');
     		assert.equal( result[0].name, 'Stacy', 'first match is Stacy');
@@ -200,11 +201,11 @@ describe('Test newSQL listing', function()  {
 
     	var  cmd = {
     		op: 'list',
-    		expr: stemp.value(),
-    		query: {dob: new Date('1990-01-01'), weight: 200, gender: 1}
-    	};
+    		expr: stemp.value()
+    	},
+        query = {dob: new Date('1990-01-01'), weight: 200, gender: 1};
 
-    	newsql.execute(cmd, function(err, result) {
+    	newsql.execute(cmd, query, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
     		assert.equal( result.length, 6, 'match 6 persons');
     		assert.equal( result[0].name, 'Mike', 'first match is Mike');
@@ -229,11 +230,11 @@ describe('Test newSQL listing', function()  {
 
     	var  cmd = {
     		op: 'list',
-    		expr: stemp.value(),
-    		query: {dob: new Date('1990-01-01'), weight: 150, gender: 1}
-    	};
+    		expr: stemp.value()
+    	},
+        query = {dob: new Date('1990-01-01'), weight: 150, gender: 1};
 
-    	newsql.execute(cmd, function(err, result) {
+    	newsql.execute(cmd, query, function(err, result) {
     		//console.log( JSON.stringify(result, null, 2) );
     		assert.equal( result.length, 4, 'match 4 persons');
 			done();
@@ -259,11 +260,11 @@ describe('Test newSQL listing', function()  {
         var  stemp = newsql.sqlTemplate('Person').filter({name: 'weight', op: '>'}),
              cmd = {
                 op: 'list',
-                expr: stemp.value(),
-                query: {weight: 150}
-             };
+                expr: stemp.value()
+             },
+             query = {weight: 150};
 
-        newsql.execute(cmd, function(err, list) {
+        newsql.execute(cmd, query, function(err, list) {
             //console.log( JSON.stringify(list, null, 2) );
             assert.equal(list.length, 4, 'total of 4 matches');
             assert.equal(list[2].weight, 180, 'Person #3 weighted 180 pounds.');

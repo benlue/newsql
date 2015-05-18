@@ -1,3 +1,9 @@
+## 0.1.0
+
++ The _find()_ function will always return all the qualified entries. In the eariler releases, you may get only partial results if your query is mostly on NoSQL columns.
+
++ Some of the APIs have been revised to make it even easier to use. 
+
 ## 0.0.8
 
 + Fixed a bug which could possibly lose not pre-defined clumn (property) values if not all of the un-predefined properties are updated.

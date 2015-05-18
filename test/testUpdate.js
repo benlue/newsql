@@ -24,10 +24,9 @@ describe('Test newSQL update', function()  {
 	});
 
 	it('Delete', function(done) {
-		var  filter = {name: 'weight', op: '<'},
-			 query = {weight: 100};
+		var  query = {weight: {op: '<', value: 100}};
 
-		newsql.del('Person', filter, query, function(err, result) {
+		newsql.del('Person', query, function(err, result) {
 			//assert(!err, 'cannot delete successfully');
 			//console.log(JSON.stringify(result, null, 2));
 			done();
@@ -35,29 +34,29 @@ describe('Test newSQL update', function()  {
 	});
 
 	it('Update', function(done) {
-		var  orFilter = {op: 'and', filters: [
-					{name: 'gender', op: '='},
-					{name: 'weight', op: '>='}
-				]},
-			 data = {dob: '1992-04-01'},
-			 query = {weight: 180, gender: 1};
+		var  data = {dob: '1992-04-01'},
+			 query = {
+				 weight: {op: '>=', value: 180},
+				 gender: 1
+			 };
 
-		newsql.update('Person', data, orFilter, query, function(err) {
-			var  stemp = newsql.sqlTemplate('Person');
-	    	stemp.column(['dob']).
-	    	filter( {name: 'Person_id', op: '='} );
+		newsql.update('Person', data, query, function(err) {
+			var  expr = newsql.sql('Person')
+	    					  .column(['dob'])
+							  .filter({name: 'Person_id', op: '='});
 
 	    	var  qcmd = {
 		    		op: 'query',
-		    		expr: stemp.value()
+		    		expr: expr.value()
 	    		 },
 	    		 query = {Person_id: 7};
 
 	    	newsql.execute(qcmd, query, function(err, result) {
+				//console.log(JSON.stringify(result, null, 4));
 	    		assert.equal(result.dob.toString().indexOf('Wed Apr 01'), 0, 'dob not correct');
 
 	    		data = {dob: '1992-04-21'};
-	    		newsql.update('Person', data, orFilter, query, function(err) {
+	    		newsql.update('Person', data, query, function(err) {
 	    			done();
 	    		});
 	    	});
@@ -66,28 +65,21 @@ describe('Test newSQL update', function()  {
 
 	it('update part of the non-SQL columns', function(done) {
 		var  data = {hobby: 'hiking'},
-			 query = {Person_id: 9},
-			 filter = {name: 'Person_id', op: '='};
+			 query = {Person_id: 9};
 
-		newsql.update('Person', data, filter, query, function(err) {
-			var  sqlExpr = newsql.sqlTemplate('Person')
-	    						 .filter( {name: 'Person_id', op: '='} ).value(),
-	    		 qcmd = {
-		    		op: 'query',
-		    		expr: sqlExpr
-	    		 };
-
-	    	newsql.execute(qcmd, query, function(err, result) {
-	    		assert.equal(result.weight, 130, 'weight is not changed');
-	    		assert.equal(result.hobby, 'hiking', 'hobby becomes hiking');
+		newsql.update('Person', data, query, function(err) {
+			newsql.find('Person', query, function(err, result) {
+	    		assert.equal(result[0].weight, 130, 'weight is not changed');
+	    		assert.equal(result[0].hobby, 'hiking', 'hobby becomes hiking');
 
 	    		data.hobby = 'music';
-	    		newsql.update('Person', data, filter, query, function(err) {
+	    		newsql.update('Person', data, query, function(err) {
 	    			done();
 	    		});
 	    	});
 		});
 	});
+
 });
 
 describe('Test newSQL update', function()  {
@@ -102,7 +94,7 @@ describe('Test newSQL update', function()  {
 			conn.beginTransaction(function(err) {
 				assert(!err, 'Failed to begin transaction');
 
-				newsql.insert(cmd, data, function(err, pk) {
+				newsql.execute(cmd, data, null, function(err, pk) {
 					assert(!err, 'Failed to insert');
 					//console.log('new entity id is %s', JSON.stringify(pk, null, 4));
 
@@ -111,7 +103,7 @@ describe('Test newSQL update', function()  {
 
 					var  delCmd = {op: 'delete', expr: stemp.value(), conn: conn};
 
-					newsql.del(delCmd, pk, function(err) {
+					newsql.execute(delCmd, pk, function(err) {
 						assert(!err, 'cannot delete successfully');
 						conn.commit(function(err) {
 							conn.release();
@@ -125,16 +117,18 @@ describe('Test newSQL update', function()  {
 	});
 
 	it('Update with transaction', function(done) {
-		var  andFilter = {op: 'and', filters: [
-					{name: 'gender', op: '='},
-					{name: 'weight', op: '>='}
-				]},
-			 data = {dob: '1992-04-01'},
+		var  data = {dob: '1992-04-01'},
+			 filter = newsql.chainFilters('and',
+			 	[
+					 {name: 'weight', op: '>='},
+					 {name: 'gender', op: '='},
+					 {name: 'Person_id', op: '='}
+				]
+			 ),
 			 query = {weight: 180, gender: 1},
-			 stemp = newsql.sqlTemplate('Person');
-
-		stemp.filter( andFilter );
-		var  cmd = {op: 'update', expr: stemp.value()};
+			 expr = newsql.sql('Person').filter(filter);
+			 
+		var  cmd = {op: 'update', expr: expr.value()};
 
 		newsql.getConnection(function(err, conn) {
 			assert(!err, 'Failed to get connection');
@@ -143,21 +137,22 @@ describe('Test newSQL update', function()  {
 			conn.beginTransaction(function(err) {
 				assert(!err, 'Failed to begin transaction');
 
-				newsql.update(cmd, data, query, function(err) {
-					var  sqlExpr = newsql.sqlTemplate('Person').column(['dob']).
-			    	filter( {name: 'Person_id', op: '='} ).value();
+				newsql.execute(cmd, data, query, function(err) {
+					var  sqlExpr = newsql.sql('Person')
+										 .column(['dob'])
+										 .filter({name: 'Person_id', op: '='});
 
 			    	var  qcmd = {
 				    		op: 'query',
-				    		expr: sqlExpr,
+				    		expr: sqlExpr.value(),
 				    		conn: conn
 			    		 },
 			    		 query = {Person_id: 7};
 
 			    	newsql.execute(qcmd, query, function(err, result) {
-			    		assert.equal(result.dob.toString().indexOf('Wed Apr 01'), 0, 'dob not correct');
+			    		assert.equal(result.dob.toString().indexOf('Apr 01'), 4, 'dob not correct');
 
-			    		newsql.update(cmd, {dob: '1992-04-21'}, query, function(err) {
+			    		newsql.execute(cmd, {dob: '1992-04-21'}, query, function(err) {
 			    			assert(!err, 'cannot update successfully');
 							conn.commit(function(err) {
 								conn.release();
@@ -169,5 +164,24 @@ describe('Test newSQL update', function()  {
 				});
 			});
 		});
+	});
+	
+	it.skip('temp', function(done) {
+		var  filter = newsql.chainFilters('and',
+			 	[
+					 {name: 'weight', op: '>='},
+					 {name: 'gender', op: '='}
+				]
+			 ),
+			 query = {weight: 180, gender: 1},
+			 expr = newsql.sql('Person').filter(filter);
+			 
+		var  cmd = {op: 'list', expr: expr.value()};
+
+    	newsql.execute(cmd, query, function(err, result) {
+			console.log(JSON.stringify(result, null, 4));
+    		//assert.equal(result.dob.toString().indexOf('Apr 21'), 4, 'dob not correct');
+			done();
+    	});
 	});
 });
