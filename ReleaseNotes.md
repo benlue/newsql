@@ -1,3 +1,7 @@
+## 0.1.1
+
++ Full support of query objects.
+
 ## 0.1.0
 
 + The _find()_ function will always return all the qualified entries. In the eariler releases, you may get only partial results if your query is mostly on NoSQL columns.

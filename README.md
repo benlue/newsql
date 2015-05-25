@@ -8,15 +8,15 @@ When we look at the real world applications, we may find that data models are us
 The good news is you may have a solution. **newsql** allows you to store data with properties not defined as table columns. You can even query on those "undefined" properties. That will give you the benefits of NoSQL. On the other hand, **newsql** still exhibits the ACID characteristics and transactions are supported which are not available for NoSQL. Better yet, you can index any "undefined" properties whenever necessary. There are no limitations on how many indexes you can put on a table (or collection) as most NoSQL databases have difficulties in offering them.
 
 ## What's New
-Detailed info of each release is manifested in [release notes](https://github.com/benlue/newsql/blob/master/ReleaseNotes.md). Below are some highlights:
+Detailed info of each release is described in [release notes](https://github.com/benlue/newsql/blob/master/ReleaseNotes.md). Below are some highlights:
+
++ Full support of [query objects](https://github.com/benlue/sql-soar/blob/master/doc/QueryObject.md) (0.1.1).
 
 + Some APIs have been revised to make them even easier to use. As a result, v 0.1.0 will not be compatible with earlier releases.
 
 + **newsql** can now correctly access your existing mySQL tables. If you try to update your existing tables with **newsql**, **newsql** will automatically convert your table to be newsql enbaled. You can turn this feature off (0.0.5).
 
 + The signature of the _execute()_ function was changed to make it easier to resue SQL templates. The old format still works, but is deprecated (0.0.5).
-
-+ Table joins can be done now (0.0.4). Because **newsql** allows you to access "undefined" properties, the syntax is a bit different from SQL when doing table join. Check [How to do table join](#newsqlJoin) for details.
 
 + **newsql** can do something most (if not all) NoSQL databases can not do: indexing properties of documents whenever you need to. **newsql** provides a _indexProperty()_ function to index a property when a performance boost is needed (0.0.4).
 
@@ -343,23 +343,6 @@ Example:
 <a name="dtManiAPI"></a>
 ### Data manipulation APIs
 
-<a name="findOne"></a>
-#### findOne(expr, query, cb)
-If you exepct your query should return just one data instance, you can use _findOne()_ instead of _find()_. **_expr_** can be the table name (collection name) or a SQL expression which can be built by [soar.sql()](#soarSBI). **_query_** is the actual value to be applied to the query condition. **_cb(err, list)_** is a callback function which receives an error (if any) and an array of returned data.
-
-Example:
-
-    var  expr = newsql.sql('myTable')
-                      .column('name');
-                      
-    newsql.findOne(expr, {age: 18}, function(err, data) {
-    	// data is an object of people whose age is equal to 18
-    });
-
-In the above example, we use a SQL expression to compose a query  which is almost the same as the following SQL statement:
-
-    SELECT name FROM myTable WHERE age = 18;
-
 <a name="newsqlFind"></a>
 #### find(expr, query, cb)
 **_expr_** can be the table name (collection name) or a SQL expression which can be built by [newsql.sql()](#soarSBI). **_query_** is the actual value to be applied to the query condition. **_cb(err, list)_** is a callback function which receives an error (if any) and an array of returned data.
@@ -385,6 +368,25 @@ The above example can be programmed in a more concise way:
     newsql.find('myTable', query, function(err, list) {
     	// list will contain people whose age is greater than 18
     });
+
+This time, every table columns will be returned instead of just the 'name' column. Also, we use a query object to specify the query condition. To fully explore the features of query objects, please refer to this [short article](https://github.com/benlue/sql-soar/blob/master/doc/QueryObject.md).
+
+<a name="findOne"></a>
+#### findOne(expr, query, cb)
+If you exepct your query should return just one data instance, you can use _findOne()_ instead of _find()_ . **_expr_** can be the table name (collection name) or a SQL expression which can be built by [newsql.sql()](#soarSBI). **_query_** is the actual value to be applied to the query condition. **_cb(err, list)_** is a callback function which receives an error (if any) and an array of returned data.
+
+Example:
+
+    var  expr = newsql.sql('myTable')
+                      .column('name');
+                      
+    newsql.findOne(expr, {age: 18}, function(err, data) {
+    	// data is an object of people whose age is equal to 18
+    });
+
+In the above example, we use a SQL expression to compose a query  which is almost the same as the following SQL statement:
+
+    SELECT name FROM myTable WHERE age = 18;
 
 <a name="apiInsert"></a>
 #### insert(expr, data, cb)
