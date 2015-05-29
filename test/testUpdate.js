@@ -79,10 +79,42 @@ describe('Test newSQL update', function()  {
 	    	});
 		});
 	});
+	
+	it('Update with restriected columns', function(done) {
+		var  expr = newsql.sql('Person')
+						  .column(['gender'])
+						  .filter({name: 'Person_id', op: '='}),
+			 data = {name: 'Maria', gender: 0, hobby: 'jogging'},
+			 query = {Person_id: 1},
+			 cmd = {
+				 op: 'update',
+				 expr: expr.value()
+			 };
+
+		newsql.execute(cmd, data, query, function(err) {
+			var  expr = newsql.sql('Person')
+	    					  .column(['dob'])
+							  .filter({name: 'Person_id', op: '='});
+
+	    	newsql.findOne('Person', query, function(err, result) {
+				//console.log(JSON.stringify(result, null, 4));
+	    		assert.equal(result.name, 'Mike', 'name should not changed');
+				assert.equal(result.gender, 0, 'gender should be changed!');
+				assert(!result.hobby, 'hobby should not be saved');
+
+	    		data = {gender: 1};
+	    		newsql.execute(cmd, data, query, function(err) {
+	    			done();
+	    		});
+	    	});
+		});
+	});
 
 });
 
-describe('Test newSQL update', function()  {
+
+describe('Update with transactons', function()  {
+	
 	it('Insert & delete with transactions', function(done) {
 		var  data = {name: 'David', dob: '1988-12-05', gender: 1, skill: ['node.js', 'Java'], weight: 80},
 			 cmd = {op: 'insert', expr: newsql.sqlTemplate('Person').value()};

@@ -3,20 +3,20 @@ newsql
 
 SQL or NoSQL? That's a question having been asked by many developers. With SQL, we get the ACID (atomicity, consistency, isolation, durability) benefits but the data model can be rather rigid. As to NoSQL, its data model is very flexible at the cost of losing the ACID characteristics.
 
-When we look at the real world applications, we may find that data models are usually a mix of both. That is a data model is usually composed of a set of "inertia" properties which are shared by all data instances and there are "variable" properties which are owned by just some of the data instances. Those variable properties could spread out like a long tail. With that observation, it's easy to see that we'll never find the "right" answer by going either way.
+When we look at the real world applications, we may find their data models are usually a mix of both. That is a data model is usually composed of a set of "core" properties which are shared by all data instances and there are "variable" properties which are owned by just some of the data instances. Those variable properties could spread out like a long tail. With that observation, it's easy to see why we'll never find the "right" answer by going either way.
 
-The good news is you may have a solution. **newsql** allows you to store data with properties not defined as table columns. You can even query on those "undefined" properties. That will give you the benefits of NoSQL. On the other hand, **newsql** still exhibits the ACID characteristics and transactions are supported which are not available for NoSQL. Better yet, you can index any "undefined" properties whenever necessary. There are no limitations on how many indexes you can put on a table (or collection) as most NoSQL databases have difficulties in offering them.
+The good news is you may now have a solution. **newsql** allows you to store data with properties not defined as table columns. You can even query on those "undefined" properties. That will give you the benefits of NoSQL. On the other hand, **newsql** still exhibits the ACID characteristics and transactions are supported which are not available for NoSQL. Better yet, you can index any "undefined" properties whenever necessary. There are no limitations on how many indexes you can put on a table (or collection) as most NoSQL databases have difficulties in offering them.
 
 ## What's New
 Detailed info of each release is described in [release notes](https://github.com/benlue/newsql/blob/master/ReleaseNotes.md). Below are some highlights:
+
++ If table columns are specified in the SQL exprssion to the _insert()_ or _update()_ function call, the input data will be filtered using the table columns specified before being written to the database (0.1.2).
 
 + Full support of [query objects](https://github.com/benlue/sql-soar/blob/master/doc/QueryObject.md) (0.1.1).
 
 + Some APIs have been revised to make them even easier to use. As a result, v 0.1.0 will not be compatible with earlier releases.
 
 + **newsql** can now correctly access your existing mySQL tables. If you try to update your existing tables with **newsql**, **newsql** will automatically convert your table to be newsql enbaled. You can turn this feature off (0.0.5).
-
-+ The signature of the _execute()_ function was changed to make it easier to resue SQL templates. The old format still works, but is deprecated (0.0.5).
 
 + **newsql** can do something most (if not all) NoSQL databases can not do: indexing properties of documents whenever you need to. **newsql** provides a _indexProperty()_ function to index a property when a performance boost is needed (0.0.4).
 
@@ -26,6 +26,9 @@ Detailed info of each release is described in [release notes](https://github.com
 
     npm install newsql
     
+## Documentation
+There is a [developer guide](http://benlue.gitbooks.io/newsqlguide/content/) for SQL developers.
+
 ## Contents
 
 + [For NoSQL develpers](#nosqlDev)
@@ -412,7 +415,7 @@ Example:
 
 <a name="apiUpdate"></a>
 #### update(expr, data, query, cb)
-The _update()_ function can update a table entity or a doument in a colletion. **_expr_** can be the table name (collection name) whose data will be updatd or a SQL expression which can be built by [newsql.sql()](#soarSBI). **_data_** is a plain object containing update data. **_query_** is the actual value to be applied to the query condition. **_cb(err)_** is a callback function which receives an error object (if errors occurred).
+The _update()_ function can update a table entity or a doument in a collection. **_expr_** can be either the table name (collection name) of the entry to be updated or a SQL expression which is built by [newsql.sql()](#soarSBI). **_data_** is a plain object containing update data. **_query_** is the actual value to be applied to the query condition. **_cb(err)_** is a callback function which receives an error object (if errors occurred).
 
 Example:
 
@@ -529,7 +532,7 @@ This function is to remove a collection. This function is actually the same as _
 #### indexProperty(colName, propName, propType, cb)
 This is a great tool for NoSQL developers. When working with NoSQL databases, sometimes you'd want to index a document property to improve query performance when your data grow big. Unfortunately, that's something NoSQL databases would fall short.
 
-With **newsql**, you can index (almost) any property you like by calling the _indexProperty()_ method on the property which you would like to index. The function takes four parameters. **_colName_** is the name of the collection and **_propName_** is the name of the property to be indexed. **_propTyoe_** is a JSON object specifying the data type of a property so it can be properly indexed. The **_propTyoe_** parameter has three properties of its own:
+With **newsql**, you can index (almost) any property you like by calling the _indexProperty()_ method on the property which you would like to index. The function takes four parameters. **_colName_** is the name of the collection and **_propName_** is the name of the property to be indexed. **_propType_** is a JSON object specifying the data type of a property so it can be properly indexed. The **_propType_** parameter has three properties of its own:
 
 + **type**: data type of a property. Possible values are 'boolean', 'integer', 'number', and 'string'. This is required.
 + **format**: provides additional information about the data type of a property. If the data type is 'integer', format can be 'int8', 'int16', or 'int64' and those will be mapped to 'tinyint', 'smallint' and 'bigint' respectively. If the data type is 'number', format can be 'double', 'float' or 'decimal(n,s)'. For 'string' data type, format can be 'text'.

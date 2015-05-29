@@ -1,3 +1,7 @@
+## 0.1.2
+
++ If table columns are specified in the SQL exprssion to the _insert()_ or _update()_ function call, the input data will be filtered using the table columns specified before being written to the database.
+
 ## 0.1.1
 
 + Full support of query objects.
